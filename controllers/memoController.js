@@ -6,7 +6,6 @@ module.exports = {
             const memos = await MemoModel.findAll();
             res.locals.memos = memos
             res.render('index');
-            console.log(memos)
         } catch (error) {
             console.error(error);
         }
