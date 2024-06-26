@@ -68,5 +68,12 @@ app.set("view engine", "ejs");
 
 // 최종적으로 제대로 작동하는지 확인 
 app.listen(app.get("port"), () => {
+  console.log(
+    "두다다다다다다다\n" +
+    "두다다다다다다다\n" +
+    "　(∩`・ω・)\n" +
+    "＿/_ミつ/￣￣￣/\n" +
+    "　　＼/＿＿＿/\n"
+  )
   console.log(`Server running at http://localhost:${app.get("port")}`);
 });

@@ -1,60 +1,68 @@
-
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/index.css">
-    <link rel="script" href="/js/index.js">
+    <script src="/js/index.js"></script>
 </head>
 
 <body>
-<div class="background-header">
+    <div class="background-header">
 
-</div>
-<div class="background-body">
+    </div>
+    <div class="background-body">
 
-</div>
-<div class="wrap">
-    <div class="header">
-        <h2>Memo</h2>
-        <p>
-            공유하고 싶은 소식을 입력해주세요.
-        </p>
     </div>
-    <div class="area-write">
-        <textarea class="field" placeholder="공유하고 싶은 소식을 입력해주세요" name="contents" id="contents" cols="30"
-                  rows="10"></textarea>
-        <!--            <button class="btn btn-danger" onclick="writePost()">작성하기</button>-->
-        <img src="/img/send.png" alt="" onclick="writePost()">
-    </div>
-    
-    <div id="cards-box" class="area-read">
-        <% if (memos.length !==0) { %>
-            <% memos.forEach(memo=> { %>
-        <div class="card">
-            <!-- date/username 영역 -->
-            <div class="metadata">
-                <div class="date">
-                    <%= memo.createdAt %>
-                </div>
-                <div class="username">
-                    <%= memo.userId %>
-                </div>
-            </div>
-            <!-- contents 조회/수정 영역-->
-            <div class="contents">
-                <%= memo.content %>
-            </div>
-            <!-- 버튼 영역-->
-            <div class="footer">
-                <img id="1-edit" class="icon-start-edit" src="/img/delete.png" alt="" onclick="editPost('1')">
-                <img id="1-delete" class="icon-delete" src="/img/delete.png" alt="" onclick="deleteOne('1')">
-                <img id="1-submit" class="icon-end-edit" src="/img/edit.png" alt="" onclick="submitEdit('1')">
-            </div>
+    <div class="wrap">
+        <div class="header">
+            <h2>Memo</h2>
+            <p>
+                공유하고 싶은 소식을 입력해주세요.
+            </p>
         </div>
-        <% }); %>
-        <% }; %>
+        <div class="area-write">
+            <textarea class="field" placeholder="공유하고 싶은 소식을 입력해주세요" name="contents" id="contents" cols="30"
+                rows="10"></textarea>
+            <img src="/img/send.png" alt="" onclick="writePost()">
+        </div>
+
+        <div id="cards-box" class="area-read">
+            <% if (memos.length !==0) { %>
+                <% memos.forEach(memo=> { %>
+                    <div class="card">
+                        <!-- date/username 영역 -->
+                        <div class="metadata">
+                            <div class="date">
+                                <%= memo.createdAt %>
+                            </div>
+                            <div class="username">
+                                <%= memo.userId %>
+                            </div>
+                        </div>
+                        <!-- contents 조회/수정 영역-->
+                        <!-- contents 조회/수정 영역-->
+                        <div class="contents">
+                            <div id="<%=memo.id %>-contents" class="text">
+                                <%= memo.content %>
+                            </div>
+                            <div id="<%=memo.id %>-editarea" class="edit">
+                                <textarea id="<%=memo.id %>-textarea" class="te-edit" name="" id="" cols="30"
+                                    rows="5"></textarea>
+                            </div>
+                        </div>
+                        <!-- 버튼 영역-->
+                        <div class="footer">
+                            <img id="<%=memo.id %>-edit" class="icon-start-edit" src="/img/edit.png" alt=""
+                                onclick="editPost('<%=memo.id %>')">
+                            <img id="<%=memo.id %>-delete" class="icon-delete" src="/img/delete.png" alt=""
+                                onclick="deleteOne('<%=memo.id %>')">
+                            <img id="<%=memo.id %>-submit" class="icon-end-edit" src="/img/done.png" alt=""
+                                onclick="submitEdit('<%=memo.id %>')">
+                        </div>
+                    </div>
+                    <% }); %>
+                        <% }; %>
+        </div>
     </div>
-</div>
 </body>
 
 </html>
