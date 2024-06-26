@@ -13,7 +13,7 @@ body {
     margin: 10px auto;
 }
 
-#contents {
+#content {
     width: 538px;
 }
 
@@ -134,17 +134,17 @@ textarea.field::placeholder {
     margin-left: 20px;
 }
 
-.contents {
+.content {
     padding: 0px 23px;
     word-wrap: break-word;
     word-break: break-all;
 }
 
-.contents div.edit {
+.content div.edit {
     display: none;
 }
 
-.contents textarea.te-edit {
+.content textarea.te-edit {
     border-right: none;
     border-top: none;
     border-left: none;

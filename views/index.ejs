@@ -1,6 +1,4 @@
 <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/index.css">
     <script src="/js/index.js"></script>
 </head>
@@ -20,7 +18,7 @@
             </p>
         </div>
         <div class="area-write">
-            <textarea class="field" placeholder="공유하고 싶은 소식을 입력해주세요" name="contents" id="contents" cols="30"
+            <textarea class="field" placeholder="공유하고 싶은 소식을 입력해주세요" name="content" id="content" cols="30"
                 rows="10"></textarea>
             <img src="/img/send.png" alt="" onclick="writePost()">
         </div>
@@ -32,16 +30,17 @@
                         <!-- date/username 영역 -->
                         <div class="metadata">
                             <div class="date">
-                                <%= memo.createdAt %>
+                                <script>
+                                    document.write(formatTimeStamp('<%= memo.createdAt.seconds %>'));
+                                </script>
                             </div>
                             <div class="username">
                                 <%= memo.userId %>
                             </div>
                         </div>
-                        <!-- contents 조회/수정 영역-->
-                        <!-- contents 조회/수정 영역-->
-                        <div class="contents">
-                            <div id="<%=memo.id %>-contents" class="text">
+                        <!-- content 조회/수정 영역-->
+                        <div class="content">
+                            <div id="<%=memo.id %>-content" class="text">
                                 <%= memo.content %>
                             </div>
                             <div id="<%=memo.id %>-editarea" class="edit">
