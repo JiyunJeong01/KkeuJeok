@@ -6,8 +6,42 @@ module.exports = {
             const memos = await MemoModel.findAll();
             res.locals.memos = memos
             res.render('index');
+            console.log(memos)
         } catch (error) {
-            console.error('Error fetching posts:', error);
+            console.error(error);
         }
     },
+
+    createMemo: async (req, res, next) => {
+        try{
+            let {userId, content} = req.body;
+            await MemoModel.createMemo(userId, content);
+            res.status(200).json({ message: "메모가 성공적으로 생성되었습니다." });
+        } catch (error) {
+            console.error(error);
+        }
+    },
+
+    modifiedMemo: async (req, res, next) => {
+        try{
+            let memoId = req.params.memoId;
+            let { content } = req.body;
+
+            await MemoModel.modifiedMemo(memoId, content);
+
+            res.status(200).json({ message: "메모가 성공적으로 수정되었습니다." });
+        } catch (error) {
+            console.error(error);
+        }
+    },
+
+    deleteMemo: async (req, res, next) => {
+        try {
+            let memoId = req.params.memoId;
+            await MemoModel.deleteMemo(memoId);
+            res.status(200).json({ message: "메모가 성공적으로 삭제되었습니다." });
+        } catch (error) {
+            console.error(error);
+        }
+    }
 }
