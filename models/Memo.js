@@ -1,11 +1,11 @@
-const { collection, doc, getDocs, addDoc, updateDoc, deleteDoc} = require('firebase/firestore');
+const { collection, doc, getDocs, addDoc, updateDoc, deleteDoc, query, orderBy} = require('firebase/firestore');
 const {db} = require('../fbase');
 
 // 전체 게시글 조회
 exports.findAll = async () => {
     try {
         // 'memos' 컬렉션의 모든 문서를 가져옴
-        const querySnapshot = await getDocs(collection(db, 'memos'));
+        const querySnapshot = await getDocs(query(collection(db, 'memos'), orderBy('createdAt', 'desc')));
         const memos = [];
         querySnapshot.forEach((memo) => {
             // 각 문서 데이터를 객체로 변환하여 배열에 추가
