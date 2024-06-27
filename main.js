@@ -56,9 +56,11 @@ app.use(express.json());
 // 라우트 설정
 const homeRouter = require('./routers/homeRouter');
 const memoRouter = require('./routers/memoRouter');
+const authRouter = require('./routers/authRouter');
 
 app.use("/home", homeRouter);
 app.use("/", memoRouter);
+app.use("/", authRouter);
 /////////////////////////////////////////
 
 // 포트 및 뷰 엔진 설정
