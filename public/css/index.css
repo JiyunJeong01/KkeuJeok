@@ -1,9 +1,5 @@
 @import url(//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSans-kr.css);
 
-body {
-    margin: 0px;
-}
-
 .area-edit {
     display: none;
 }
@@ -31,24 +27,6 @@ body {
     right: 17px;
 }
 
-.background-header {
-    position: fixed;
-    z-index: -1;
-    top: 0px;
-    width: 100%;
-    height: 428px;
-    background-color: #339af0;
-}
-
-.background-body {
-    position: fixed;
-    z-index: -1;
-    top: 428px;
-    height: 100%;
-    width: 100%;
-    background-color: #dee2e6;
-}
-
 .header {
     margin-top: 50px;
 }
@@ -63,12 +41,11 @@ body {
     line-height: 0.79;
     letter-spacing: -0.5px;
     text-align: center;
-    color: #ffffff;
+    color: #52C1FF;
 }
 
 .header p {
     margin: 40px auto;
-    width: 217px;
     height: 48px;
     font-family: 'Noto Sans KR', sans-serif;
     font-size: 16px;
@@ -78,11 +55,11 @@ body {
     line-height: 1.5;
     letter-spacing: -1.12px;
     text-align: center;
-    color: #ffffff;
+    color: #52C1FF;
 }
 
 textarea.field {
-    width: 502px !important;
+    width: 538px !important;
     height: 146px;
     border-radius: 5px;
     background-color: #ffffff;

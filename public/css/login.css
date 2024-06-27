@@ -1,0 +1,43 @@
+.container{
+    display: flex;
+    justify-content: center;
+}
+
+.login-wrapper{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 400px;
+    height: 350px;
+    padding: 40px;
+    box-sizing: border-box;
+}
+
+.login-wrapper > h2{
+    font-size: 24px;
+    color: #52C1FF;
+    margin-bottom: 20px;
+}
+
+#login-form > div{
+    display: flex;
+    justify-content: space-between;
+    color: #999999;
+}
+
+#login-form > input[type="checkbox"]{
+    display: none;
+}
+
+#login-form input[type="checkbox"] + label{
+    cursor: pointer;
+    padding-left: 26px;
+    background-image: url("checkbox.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+#login-form input[type="checkbox"]:checked + label{
+    background-image: url("checkbox-active.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+}
