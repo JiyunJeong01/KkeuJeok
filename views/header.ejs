@@ -27,6 +27,10 @@
             color: black;
             margin-right: 40px;
         }
+        .logout {
+            color: black;
+            margin-right: 40px;
+        }
     </style>
 </head>
 
@@ -48,7 +52,11 @@
             </form>
         </div>
         <div class="right-text">
-            <a class="login" href="/login">로그인</a>
+            <% if (user) { %>
+                <a class="logout" href="/logout">로그아웃</a>
+            <% } else { %>
+                <a class="login" href="/login">로그인</a>
+            <% }; %>
         </div>
     </div>
 </nav>

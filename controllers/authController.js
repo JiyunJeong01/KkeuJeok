@@ -40,6 +40,21 @@ module.exports = {
     }
   },
 
+  // 로그아웃 처리
+  logout: async (req, res) => {
+    try{
+      req.session.destroy(err => {
+        if (err) {
+            return res.status(500).json({ error: 'Failed to log out' });
+        }
+        res.redirect('/');
+    });
+    
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
   // 회원가입 페이지 로드
   accountPage: (req, res) => {
     res.render("account");
