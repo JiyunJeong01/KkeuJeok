@@ -57,7 +57,7 @@ function writePost() {
     }
 
     // 3. 전달할 data JSON으로 만듭니다.
-    let data = { 'userId': 'test', 'content': content };
+    let data = { 'content': content };
 
     // 4. POST memo 에 data를 전달합니다.
     fetch('/memo', {

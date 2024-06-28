@@ -13,7 +13,8 @@ module.exports = {
 
     createMemo: async (req, res, next) => {
         try {
-            let { userId, content } = req.body;
+            const userId = req.session.user ? req.session.user.id : 0;
+            let { content } = req.body;
             await MemoModel.createMemo(userId, content);
             res.status(200).json({ message: "메모가 성공적으로 생성되었습니다." });
         } catch (error) {
