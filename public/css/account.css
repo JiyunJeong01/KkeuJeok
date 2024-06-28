@@ -18,3 +18,11 @@
     color: #52C1FF;
     margin-bottom: 20px;
 }
+
+form > span > span {
+    color: #f86550;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    font-size: 0.8rem;
+}
