@@ -1,4 +1,4 @@
-const { collection, doc, getDocs, addDoc, updateDoc, deleteDoc, query, orderBy} = require('firebase/firestore');
+const { collection, doc, getDocs, addDoc, updateDoc, deleteDoc, query, orderBy, where } = require('firebase/firestore');
 const {db} = require('../fbase');
 
 // 전체 게시글 조회
@@ -48,8 +48,8 @@ exports.createMemo = async (userId, content) => {
 
         // 새로운 메모 객체 생성
         const memoData = {
-            userId: userId,
-            content: content,
+            userId,
+            content,
             createdAt: timestamp,
             updatedAt: timestamp
         };

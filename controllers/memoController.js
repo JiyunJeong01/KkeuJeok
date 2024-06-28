@@ -1,4 +1,4 @@
-const MemoModel = require('../models/Memo'); 
+const MemoModel = require('../models/Memo');
 
 module.exports = {
     memosLoading: async (req, res, next) => {
@@ -12,8 +12,8 @@ module.exports = {
     },
 
     createMemo: async (req, res, next) => {
-        try{
-            let {userId, content} = req.body;
+        try {
+            let { userId, content } = req.body;
             await MemoModel.createMemo(userId, content);
             res.status(200).json({ message: "메모가 성공적으로 생성되었습니다." });
         } catch (error) {
@@ -22,7 +22,7 @@ module.exports = {
     },
 
     modifiedMemo: async (req, res, next) => {
-        try{
+        try {
             let memoId = req.params.memoId;
             let { content } = req.body;
 
