@@ -11,6 +11,17 @@ module.exports = {
         }
     },
 
+    memosLoadingUser: async (req, res, next) => {
+        try {
+            const userId = req.session.user ? req.session.user.id : 0;
+            const memos = await MemoModel.findByUserId(userId);
+            res.locals.memos = memos
+            res.render('index');
+        } catch (error) {
+            console.error(error);
+        }
+    },
+
     createMemo: async (req, res, next) => {
         try {
             const userId = req.session.user ? req.session.user.id : 0;
