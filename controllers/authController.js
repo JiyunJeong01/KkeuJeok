@@ -33,7 +33,7 @@ module.exports = {
       };
 
       // 로그인 성공
-      return res.send(200);
+      res.redirect("/");
       
     } catch (error) {
       console.error(error);
@@ -50,7 +50,7 @@ module.exports = {
     try {
       const { email, name, password } = req.body;
       await userModel.creatdUser(email, name, password);
-      return res.status(200).json({ message: '회원가입이 되었습니다.' });
+      res.redirect("/login");
     } catch (error) {
       console.error(error);
     }
