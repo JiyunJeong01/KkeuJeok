@@ -1,4 +1,5 @@
 const userModel = require('../models/User');
+const bcryptjs = require('bcryptjs');
 
 module.exports = {
 
@@ -21,7 +22,8 @@ module.exports = {
       }
 
       // 비밀번호가 일치하지 않는 경우
-      if (!password == user.password) {
+      const isValidPassword = await bcryptjs.compare(password, user.password);
+      if (!isValidPassword) {
           return res.status(401).json({ field: 'password', error: '비밀번호가 일치하지 않습니다.' });
       }
 
@@ -64,7 +66,9 @@ module.exports = {
   account: async (req, res) => {
     try {
       const { email, name, password } = req.body;
-      await userModel.creatdUser(email, name, password);
+      const hashedPassword = await bcryptjs.hash(password, 12);
+
+      await userModel.creatdUser(email, name, hashedPassword);
       res.redirect("/login");
     } catch (error) {
       console.error(error);
