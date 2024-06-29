@@ -6,6 +6,12 @@ exports.getUserByEmail = async (email) => {
     try {
         // 'users' 컬렉션에서 특정 emila을 가진 유저만 가져옴
         const querySnapshot = await getDocs(query(collection(db, 'users'), where('email', '==', email)));
+        
+        // 문서가 존재하지 않는 경우 null 반환
+        if (querySnapshot.empty) {
+            return null;
+        }
+
         const user = querySnapshot.docs[0].data();
         const userData = {
             id: querySnapshot.docs[0].id,

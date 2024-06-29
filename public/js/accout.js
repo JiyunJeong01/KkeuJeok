@@ -1,5 +1,6 @@
 const form = document.querySelector('#form');
 const emailInput = document.querySelector("#email");
+const emailCheck = document.querySelector("#check_email");
 const nameInput = document.querySelector("#name");
 const passwordInput = document.querySelector("#password");
 const confirmPasswordInput = document.querySelector("#confirm_password");
@@ -13,28 +14,26 @@ nameInput.addEventListener('blur', validateName);
 passwordInput.addEventListener('blur', validatePassword);
 confirmPasswordInput.addEventListener('blur', comparePasswords);
 
-form.addEventListener('submit', async function(event) {
-    const emailValid = validateEmail();
-    const nameValid = validateName();
-    const passwordValid = validatePassword();
-    const passwordsMatch = comparePasswords();
+form.addEventListener('submit', async function (event) {
+    // 비동기 함수들을 병렬로 실행하여 각각의 Promise를 생성
+    const emailPromise = validateEmail();
+    const namePromise = validateName();
+    const passwordPromise = validatePassword();
+    const passwordsMatchPromise = comparePasswords();
+
+    // 각 Promise가 완료될 때까지 기다리지 않고 동시에 시작
+    const emailValid = await emailPromise;
+    const nameValid = await namePromise;
+    const passwordValid = await passwordPromise;
+    const passwordsMatch = await passwordsMatchPromise;
 
     if (!emailValid || !nameValid || !passwordValid || !passwordsMatch) {
         event.preventDefault();
     }
-
-    /*
-    const isEmailDuplicate = await checkEmailDuplicate(emailInput.value);
-    if (isEmailDuplicate) {
-        emailError.textContent = '이메일이 이미 사용 중입니다.';
-        emailError.style.display = 'inline';
-        event.preventDefault();
-        return;
-    }
-    */
 });
 
-function validateEmail() {
+// 이메일 형식 체크
+async function validateEmail() {
     const email = emailInput.value;
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -47,13 +46,35 @@ function validateEmail() {
         emailError.textContent = '이메일 형식이 올바르지 않습니다.';
         emailError.style.display = 'inline';
         return false;
-    } else {
+    } 
+    // await이 없으면 promise를 반환한다. promise가 아니라 value를 받기 위해서 await을 걸었다.
+    else if (await checkEmailDuplicate(email)) {
+        emailError.textContent = '사용 중인 이메일입니다.';
+        emailError.style.display = 'inline';
+        return false;
+    }
+    else {
         emailError.style.display = 'none';
         return true;
     }
 }
 
-function validateName() {
+// 이메일 중복 체크
+async function checkEmailDuplicate(email) {
+    const data = { 'email': email };
+    const response = await fetch("/check-email", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    })
+    const isDuplicate = await response.json();
+    return isDuplicate.isDuplicate;
+}
+
+// 이름 형식 체크
+async function validateName() {
     const name = nameInput.value;
 
     if (!name) {
@@ -66,7 +87,8 @@ function validateName() {
     }
 }
 
-function validatePassword() {
+// 비밀번호 형식 체크
+async function validatePassword() {
     const password = passwordInput.value;
     const hasMinLength = password.length >= 8 && password.length <= 16;
     const hasNumber = /\d/.test(password);
@@ -87,10 +109,11 @@ function validatePassword() {
     }
 }
 
-function comparePasswords() {
+// 비밀번호 일치 확인
+async function comparePasswords() {
     const password = passwordInput.value;
     const confirmPassword = confirmPasswordInput.value;
-    
+
     if (!confirmPassword) {
         passwordConfirmError.textContent = '비밀번호 확인을 입력해 주세요.';
         passwordConfirmError.style.display = 'inline';
@@ -103,22 +126,5 @@ function comparePasswords() {
     } else {
         passwordConfirmError.style.display = 'none';
         return true;
-    }
-}
-
-async function checkEmailDuplicate(email) {
-    try {
-        const response = await fetch("/check-email", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ email: email })
-        });
-        const data = await response.json();
-        return data.isDuplicate;
-    } catch (error) {
-        console.error('Error:', error);
-        return false;
     }
 }
