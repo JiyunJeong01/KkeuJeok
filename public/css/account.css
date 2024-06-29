@@ -19,10 +19,11 @@
     margin-bottom: 20px;
 }
 
-form > span > span {
+.error {
     color: #f86550;
     position: absolute;
-    right: 15px;
-    top: 15px;
-    font-size: 0.8rem;
+    left: 2px;
+    top: 49px;
+    font-size: 0.7rem;
+    display: none;
 }
