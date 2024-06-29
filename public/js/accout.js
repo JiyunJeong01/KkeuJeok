@@ -1,62 +1,109 @@
-const $form = document.querySelector('#form');
+const form = document.querySelector('#form');
 const emailInput = document.querySelector("#email");
+const nameInput = document.querySelector("#name");
 const passwordInput = document.querySelector("#password");
 const confirmPasswordInput = document.querySelector("#confirm_password");
 const emailError = document.querySelector("#email_error");
+const nameError = document.querySelector("#name_error");
 const passwordError = document.querySelector("#password_error");
 const passwordConfirmError = document.querySelector("#password_confirm_error");
 
-$form.addEventListener('submit', async function (event) {
-    emailError.textContent = '';
-    passwordError.textContent = '';
+emailInput.addEventListener('blur', validateEmail);
+nameInput.addEventListener('blur', validateName);
+passwordInput.addEventListener('blur', validatePassword);
+confirmPasswordInput.addEventListener('blur', comparePasswords);
 
-    const email = emailInput.value;
-    const password = passwordInput.value;
-    const confirmPassword = confirmPasswordInput.value;
+form.addEventListener('submit', async function(event) {
+    const emailValid = validateEmail();
+    const nameValid = validateName();
+    const passwordValid = validatePassword();
+    const passwordsMatch = comparePasswords();
 
-    if (!validateEmail(email)) {
-        emailError.textContent = '이메일 형식이 올바르지 않습니다.';
+    if (!emailValid || !nameValid || !passwordValid || !passwordsMatch) {
         event.preventDefault();
-        return;
-    }
-
-    if (!validatePassword(password)) {
-        passwordError.textContent = '비밀번호는 8자 이상이어야 하며, 숫자와 문자를 포함해야 합니다.';
-        event.preventDefault();
-        return;
-    }
-
-    if (password !== confirmPassword) {
-        passwordConfirmError.textContent = '비밀번호가 일치하지 않습니다.';
-        event.preventDefault();
-        return;
     }
 
     /*
-    const isEmailDuplicate = await checkEmailDuplicate(email);
+    const isEmailDuplicate = await checkEmailDuplicate(emailInput.value);
     if (isEmailDuplicate) {
         emailError.textContent = '이메일이 이미 사용 중입니다.';
+        emailError.style.display = 'inline';
+        event.preventDefault();
         return;
     }
     */
-   
-    // 클라이언트 측에서 이미 유효성 검사를 하기 때문에, 서버의 response가 없어도 바로 리다이렉션 가능
-    // 굳이 이런 방식 쓴 이유 = response를 받으려면 form action을 사용 못하고 자체적으로 fecth를 보내야 하는데 그게 번거로워 보여서...
-    window.location.href = '/login';
 });
 
-// 이메일 검증 함수
-function validateEmail(email) {
+function validateEmail() {
+    const email = emailInput.value;
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return (emailPattern.test(email))
+
+    if (!email) {
+        emailError.textContent = '이메일을 입력해 주세요.';
+        emailError.style.display = 'inline';
+        return false;
+    }
+    else if (!emailPattern.test(email)) {
+        emailError.textContent = '이메일 형식이 올바르지 않습니다.';
+        emailError.style.display = 'inline';
+        return false;
+    } else {
+        emailError.style.display = 'none';
+        return true;
+    }
 }
 
-// 비밀번호 검증 함수
-function validatePassword(password) {
-    const hasMinLength = password.length >= 8;
+function validateName() {
+    const name = nameInput.value;
+
+    if (!name) {
+        nameError.textContent = '이름을 입력해 주세요.';
+        nameError.style.display = 'inline';
+        return false;
+    } else {
+        nameError.style.display = 'none';
+        return true;
+    }
+}
+
+function validatePassword() {
+    const password = passwordInput.value;
+    const hasMinLength = password.length >= 8 && password.length <= 16;
     const hasNumber = /\d/.test(password);
     const hasLetter = /[a-zA-Z]/.test(password);
-    return (hasMinLength && hasNumber && hasLetter)
+
+    if (!password) {
+        passwordError.textContent = '비밀번호를 입력해 주세요.';
+        passwordError.style.display = 'inline';
+        return false;
+    }
+    else if (!(hasMinLength && hasNumber && hasLetter)) {
+        passwordError.textContent = '8~16자의 영문 대/소문자, 숫자, 특수문자를 사용해 주세요.';
+        passwordError.style.display = 'inline';
+        return false;
+    } else {
+        passwordError.style.display = 'none';
+        return true;
+    }
+}
+
+function comparePasswords() {
+    const password = passwordInput.value;
+    const confirmPassword = confirmPasswordInput.value;
+    
+    if (!confirmPassword) {
+        passwordConfirmError.textContent = '비밀번호 확인을 입력해 주세요.';
+        passwordConfirmError.style.display = 'inline';
+        return false;
+    }
+    else if (password !== confirmPassword) {
+        passwordConfirmError.textContent = '비밀번호가 일치하지 않습니다.';
+        passwordConfirmError.style.display = 'inline';
+        return false;
+    } else {
+        passwordConfirmError.style.display = 'none';
+        return true;
+    }
 }
 
 async function checkEmailDuplicate(email) {

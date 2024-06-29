@@ -7,24 +7,25 @@
     <form action="/submit-account" method="POST" id="form">
         <label for="email">이메일</label>
         <span>
-            <input type="email" id="email" name="email" placeholder="Email" required>
+            <input type="text" id="email" name="email" placeholder="이메일">
             <span class="error" id="email_error"></span>
         </span>
 
         <label for="name">이름</label>
         <span>
-            <input type="text" id="name" name="name" required>
+            <input type="text" id="name" name="name" placeholder="이름">
+            <span class="error" id="name_error"></span>
         </span>
 
         <label for="password">비밀번호</label>
         <span>
-            <input type="password" id="password" name="password" required>
+            <input type="password" id="password" name="password" placeholder="비밀번호">
             <span class="error" id="password_error"></span>
         </span>
 
         <label for="confirm_password">비밀번호 재확인</label>
         <span>
-            <input type="password" id="confirm_password" name="confirm_password" required>
+            <input type="password" id="confirm_password" name="confirm_password" placeholder="비밀번호 재확인">
             <span class="error" id="password_confirm_error"></span>
         </span>
 
