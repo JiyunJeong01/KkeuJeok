@@ -5,7 +5,9 @@ authController = require('../controllers/authController');
 router.get("/login", authController.loginPage);
 router.post("/submit-login", authController.login);
 router.get("/logout", authController.logout);
+
 router.get("/account", authController.accountPage);
+router.post("/check-email", authController.checkEmailDuplicate);
 router.post("/submit-account", authController.account);
 
 module.exports = router;
