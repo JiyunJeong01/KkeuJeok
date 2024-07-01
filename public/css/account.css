@@ -19,9 +19,10 @@
     margin-bottom: 20px;
 }
 
-.check_email {
+.email_btn, .check_email_btn {
     overflow: hidden;
     position: absolute;
+    height: auto;
     font-size: 0.7rem;
     right: 8px;
     top: 15px;
@@ -29,8 +30,11 @@
     border-radius: 4px;
     background: none;
 }
+.check_email_btn {
+    top: 79px;
+}
 
-.check_email:hover {
+.email_btn:hover, .check_email_btn:hover {
     background: #F2F2F2;
 }
 

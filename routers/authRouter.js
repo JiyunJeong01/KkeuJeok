@@ -8,6 +8,7 @@ router.get("/logout", authController.logout);
 
 router.get("/account", authController.accountPage);
 router.post("/check-email", authController.checkEmailDuplicate);
+router.post("/auth-email", authController.emailAuth);
 router.post("/submit-account", authController.account);
 
 module.exports = router;

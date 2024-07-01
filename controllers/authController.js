@@ -1,8 +1,15 @@
 const userModel = require('../models/User');
 const bcryptjs = require('bcryptjs');
+const smtpTransport = require('../email');
+
+
+// 랜덤 인증번호 생성 코드
+var generateRandomNumber = function (min, max) {
+  var randNum = Math.floor(Math.random() * (max - min + 1)) + min;
+  return randNum;
+}
 
 module.exports = {
-
   // 로그인 페이지 로드
   loginPage: (req, res) => {
     res.render("login");
@@ -76,6 +83,30 @@ module.exports = {
       console.log("checkEmailDuplicate 실행 중 오류:", error);
       return res.status(500).json({ message: 'Internal server error' });
     }
+  },
+
+  // 이메일 인증 번호 보내기
+  emailAuth: async (req, res) => {
+    const number = generateRandomNumber(111111, 999999);
+    const email = req.body.email;
+
+    const mailOptions = {
+      from: "stopyun0101@naver.com", // 발신자 이메일 주소.
+      to: email, // 사용자가 입력한 이메일 -> 목적지 주소 이메일
+      subject: "인증 관련 메일 입니다.",
+      html: '<h1>인증번호를 입력해주세요 \n\n\n\n\n\n</h1>' + number
+    };
+
+    smtpTransport.sendMail(mailOptions, (err, response) => {
+      if (err) {
+          console.error("메일 전송 에러:", err);
+          res.status(500).json({ ok: false, msg: '메일 전송에 실패하였습니다. 다시 시도해 주세요.' });
+      } else {
+          console.log("메일 전송 성공:", response);
+          res.json({ ok: true, msg: '메일 전송에 성공하였습니다.', authNum: number });
+      }
+      smtpTransport.close(); // 전송 종료
+  });
   },
 
   // 유저 가입 처리
