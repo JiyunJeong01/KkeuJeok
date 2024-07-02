@@ -96,7 +96,7 @@ module.exports = {
       subject: "인증 관련 메일 입니다.",
       html: '<h1>인증번호를 입력해주세요 \n\n\n\n\n\n</h1>' + number
     };
-
+  
     smtpTransport.sendMail(mailOptions, (err, response) => {
       if (err) {
           console.error("메일 전송 에러:", err);
@@ -105,6 +105,7 @@ module.exports = {
           console.log("메일 전송 성공:", response);
           res.json({ ok: true, msg: '메일 전송에 성공하였습니다.', authNum: number });
       }
+      res.set('Cache-Control', 'no-store'); // 메일이 연속해서 안 보내져서 cache 문제인지를 확인하기위해 초기화.
       smtpTransport.close(); // 전송 종료
   });
   },

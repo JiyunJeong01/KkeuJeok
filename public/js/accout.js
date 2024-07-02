@@ -1,11 +1,18 @@
 const form = document.querySelector('#form');
 const emailInput = document.querySelector("#email");
-const emailCheck = document.querySelector("#check_email");
 const emailBtn = document.getElementById("email_btn");
+const emailCheckInput = document.querySelector("#check_email");
+const checkEmailBtn = document.getElementById("check_email_btn");
+
+// 인증번호 저장 변수
+let authNum; 
+
 const nameInput = document.querySelector("#name");
 const passwordInput = document.querySelector("#password");
 const confirmPasswordInput = document.querySelector("#confirm_password");
+
 const emailError = document.querySelector("#email_error");
+const emailCheckError = document.querySelector("#email_check_error");
 const nameError = document.querySelector("#name_error");
 const passwordError = document.querySelector("#password_error");
 const passwordConfirmError = document.querySelector("#password_confirm_error");
@@ -19,11 +26,12 @@ form.addEventListener('submit', async function (event) {
     event.preventDefault(); // 기본 동작(페이지 새로고침)을 막습니다.
 
     const emailValid = await validateEmail();
+    const emailCehck = checkAuthCode();
     const nameValid = validateName();
     const passwordValid = validatePassword();
     const passwordsMatch = comparePasswords();
 
-    if (emailValid && nameValid && passwordValid && passwordsMatch) {
+    if (emailValid && emailCehck && nameValid && passwordValid && passwordsMatch) {
         form.submit(); // 모든 유효성 검사를 통과하면 폼을 제출합니다.
     }
 });
@@ -126,7 +134,7 @@ function comparePasswords() {
 }
 
 // 이메일 인증 보내기
-emailBtn.addEventListener("click", async () => {
+async function sendAuthEmail() {
     const email = emailInput.value;
 
     // 이메일이 입력되었는지 확인
@@ -149,6 +157,10 @@ emailBtn.addEventListener("click", async () => {
         const result = await response.json();
         if (result.ok) {
             alert("인증번호가 발송되었습니다.");
+            authNum = result.authNum;
+            emailCheckInput.disabled = false;
+            checkEmailBtn.classList.remove("disabled-button");
+            checkEmailBtn.style.pointerEvents = 'auto'; // 클릭 이벤트 활성화
         } else {
             emailError.textContent = result.msg;
         }
@@ -156,4 +168,28 @@ emailBtn.addEventListener("click", async () => {
         console.error("Error:", error);
         emailError.textContent = "인증번호 발송에 실패하였습니다.";
     }
-});
+};
+
+function checkAuthCode() {
+    const checkEmail = emailCheckInput.value;
+
+    // 인증번호가 입력되었는지 확인
+    if (!checkEmail) {
+        emailCheckError.textContent = "인증번호를 입력해주세요.";
+        emailCheckError.style.display = 'inline';
+        return;
+    }
+
+    // 인증번호 확인 로직
+    // checkEmail은 string이고 authNum은 int타입이라 == 사용
+    if (checkEmail == authNum) {
+        alert("인증번호 확인이 완료되었습니다.")
+        emailCheckError.style.display = 'none';
+        return true;
+    } else {
+        emailCheckError.textContent = '인증번호를 다시 확인해주세요.';
+        emailCheckError.style.display = 'inline';
+        return false;
+    }
+
+}
