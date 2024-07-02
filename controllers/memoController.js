@@ -19,7 +19,7 @@ module.exports = {
                 res.locals.memos = memos
                 res.render('index');
             } else {
-                res.redirect('/login')
+                res.redirect('/home')
             }
         } catch (error) {
             console.error(error);

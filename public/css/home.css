@@ -1,0 +1,40 @@
+.container{
+    display: flex;
+    justify-content: center;
+    width: 725px;
+    flex-direction: column;
+}
+
+.header {
+    margin-top: 50px;
+}
+
+.header h1 {
+    height: 33px;
+    font-size: 42px;
+    font-weight: 900;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 0.79;
+    letter-spacing: -0.5px;
+    text-align: center;
+    color: #52C1FF;
+}
+
+.header p {
+    margin: 40px auto;
+    height: 48px;
+    font-size: 16px;
+    font-weight: 500;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: -1.12px;
+    text-align: center;
+    color: #52C1FF;
+}
+
+h2 {
+    margin-top: 30px;
+    margin-bottom: 15px;
+}

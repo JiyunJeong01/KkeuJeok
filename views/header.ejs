@@ -46,11 +46,13 @@
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-            <form class="d-flex">
-                <input class="form-control me-2" type="search" placeholder="검색" aria-label="Search">
-            </form>
-        </div>
+        <% if (user) { %>
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+                <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="검색" aria-label="Search">
+                </form>
+            </div>
+        <% }; %>
         <div class="right-text">
             <% if (user) { %>
                 <a class="logout" href="/logout">로그아웃</a>
