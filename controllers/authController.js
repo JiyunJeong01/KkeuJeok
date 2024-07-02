@@ -18,20 +18,20 @@ module.exports = {
   // 로그인 처리
   login: async (req, res) => {
     try {
-      const { email, password } = req.body;
+      const { email = 0, password = 0 } = req.body;
 
       // 입력된 이메일로 사용자 찾기
       const user = await userModel.getUserByEmail(email);
 
       // 사용자가 존재하지 않는 경우
       if (!user) {
-        return res.status(404).json({ field: 'email', error: '회원정보를 찾을 수 없습니다.' });
+        return res.send('<script>alert("아이디와 비밀번호를 다시 확인해주세요."); window.location.replace("/login");</script>');
       }
 
       // 비밀번호가 일치하지 않는 경우
       const isValidPassword = await bcryptjs.compare(password, user.password);
       if (!isValidPassword) {
-        return res.status(401).json({ field: 'password', error: '비밀번호가 일치하지 않습니다.' });
+        return res.send('<script>alert("아이디와 비밀번호를 다시 확인해주세요."); window.location.replace("/login");</script>');
       }
 
       // 로그인 성공 시, 세션에 사용자 정보 저장
@@ -105,7 +105,7 @@ module.exports = {
           console.log("메일 전송 성공:", response);
           res.json({ ok: true, msg: '메일 전송에 성공하였습니다.', authNum: number });
       }
-      res.set('Cache-Control', 'no-store'); // 메일이 연속해서 안 보내져서 cache 문제인지를 확인하기위해 초기화.
+      res.set('Cache-Control', 'no-store'); // 메일이 연속해서 안 보내지는 문제 해결을 위해 cache 초기화.
       smtpTransport.close(); // 전송 종료
   });
   },
