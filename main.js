@@ -2,7 +2,8 @@ const express = require("express"), //애플리케이션에 express 모듈 추�
   layouts = require("express-ejs-layouts"), //모듈 설치
   methodOverride = require("method-override"),
   bodyParser = require('body-parser'),
-  session = require('express-session');
+  session = require('express-session'),
+  cookieParser = require('cookie-parser');
 
 app = express(); // app에 express 웹 서버 애플리케이션 할당
 require('dotenv').config();
@@ -35,6 +36,8 @@ app.get('/session-data', (req, res) => {
 });
 /////////////////////////////////////////
 
+// 쿠키 사용
+app.use(cookieParser());
 
 // JSON데이터의 최대 크기 설정
 app.use(bodyParser.json({ limit: '50mb' }));

@@ -12,13 +12,14 @@ var generateRandomNumber = function (min, max) {
 module.exports = {
   // 로그인 페이지 로드
   loginPage: (req, res) => {
-    res.render("login");
+    const savedEmail = req.cookies.savedEmail || ''; // 저장된 이메일 쿠키 가져오기
+    res.render('login', { savedEmail }); // login.ejs 렌더링 및 savedEmail 전달
   },
 
   // 로그인 처리
   login: async (req, res) => {
     try {
-      const { email = 0, password = 0 } = req.body;
+      const { email, password } = req.body;
 
       // 입력된 이메일로 사용자 찾기
       const user = await userModel.getUserByEmail(email);
@@ -40,6 +41,13 @@ module.exports = {
         email: user.email,
         name: user.name
       };
+
+      // "아이디 저장하기" 체크박스 확인
+      if (req.body['remember-check']) {
+        res.cookie('savedEmail', email, { maxAge: 3600 * 24 * 30 * 1000 }); // 30일 동안 저장
+      } else {
+        res.clearCookie('savedEmail'); // 쿠키 삭제
+      }
 
       // 로그인 성공
       res.redirect("/");
@@ -96,18 +104,18 @@ module.exports = {
       subject: "인증 관련 메일 입니다.",
       html: '<h1>인증번호를 입력해주세요 \n\n\n\n\n\n</h1>' + number
     };
-  
+
     smtpTransport.sendMail(mailOptions, (err, response) => {
       if (err) {
-          console.error("메일 전송 에러:", err);
-          res.status(500).json({ ok: false, msg: '메일 전송에 실패하였습니다. 다시 시도해 주세요.' });
+        console.error("메일 전송 에러:", err);
+        res.status(500).json({ ok: false, msg: '메일 전송에 실패하였습니다. 다시 시도해 주세요.' });
       } else {
-          console.log("메일 전송 성공:", response);
-          res.json({ ok: true, msg: '메일 전송에 성공하였습니다.', authNum: number });
+        console.log("메일 전송 성공:", response);
+        res.json({ ok: true, msg: '메일 전송에 성공하였습니다.', authNum: number });
       }
       res.set('Cache-Control', 'no-store'); // 메일이 연속해서 안 보내지는 문제 해결을 위해 cache 초기화.
       smtpTransport.close(); // 전송 종료
-  });
+    });
   },
 
   // 유저 가입 처리
