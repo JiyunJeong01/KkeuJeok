@@ -1,0 +1,44 @@
+<head>
+    <style>
+        .nav {
+            border-right: 1px solid black;
+            height: 100vh;
+            width: 250px;
+            position: fixed;
+            left: 0;
+            top: 66px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .link {
+            height: 35px;
+            width: 135px;
+            margin: 10px;
+            padding-left: 10px;
+            padding-top: 5px;
+            text-align: left;
+            border-radius: 10px;
+            color: black;
+        }
+
+        .link:hover {
+            background-color: #EAEAEA;
+            color: black;
+        }
+
+        .active {
+            background-color: #D7F1FF;
+            color: #09A7FF;
+            font-weight: bolder;
+        }
+    </style>
+</head>
+
+<nav class="nav flex-column">
+    <a class="link active" aria-current="page" href="/">홈</a>
+    <a class="link" href="#">중요함 (별)</a>
+    <a class="link" href="#">파일 목록</a>
+    <a class="link" href="#">설정</a>
+</nav>
