@@ -25,7 +25,7 @@ exports.findAll = async () => {
 exports.findByUserId = async (userId) => {
     try {
         // 'memos' 컬렉션에서 특정 userID를 가진 게시글만 가져옴
-        const querySnapshot = await getDocs(query(collection(db, 'memos'), where('userId', '==', userId)));
+        const querySnapshot = await getDocs(query(collection(db, 'memos'), where('userId', '==', userId), orderBy('createdAt', 'desc')));
         const memos = [];
         querySnapshot.forEach((memo) => {
             // 각 문서 데이터를 객체로 변환하여 배열에 추가
