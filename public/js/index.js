@@ -62,13 +62,26 @@ function unBookmark(id) {
         },
         body: JSON.stringify(data),
     })
-
 }
 
 // 수정 버튼을 눌렀을 때, 기존 작성 내용을 textarea 에 전달합니다.
 // 숨길 버튼을 숨기고, 나타낼 버튼을 나타냅니다.
 function editPost(id) {
     showEdits(id);
+
+    // 이미지 편집 모드로 전환
+    const imageContainer = document.getElementById(`${id}-imageContainer`);
+    const imageCols = imageContainer.querySelectorAll('.input-col');
+    imageCols.forEach(col => {
+        const img = col.querySelector('img');
+        const closeIcon = document.createElement('i');
+        closeIcon.classList.add('xi-close');
+        closeIcon.onclick = function() {
+            removeImage(img);
+        };
+        col.appendChild(closeIcon);
+    });
+
     let content = $(`#${id}-content`).text().trim();
     $(`#${id}-textarea`).val(content);
 }
@@ -77,6 +90,8 @@ function showEdits(id) {
     $(`#${id}-editarea`).show();
     $(`#${id}-submit`).show();
     $(`#${id}-delete`).show();
+    $(`#${id}-image`).show();
+    $(`#${id}-file`).show();
 
     $(`#${id}-content`).hide();
     $(`#${id}-edit`).hide();
@@ -84,26 +99,31 @@ function showEdits(id) {
 
 // 이미지를 추가합니다.
 var maxImages = 4; // 최대 이미지 수
-var imageCount = 0; // 현재 추가된 이미지 수
+var imageCount = document.querySelectorAll('#imageContainer .col').length;// 현재 추가된 이미지 수
 
-function addImage() {
+function addImage(imageContainerId) {
     var fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.accept = 'image/*';
     fileInput.multiple = true;
     fileInput.onchange = function (event) {
-        handleImageUpload(event.target.files);
+        handleImageUpload(event.target.files, imageContainerId);
     };
     fileInput.click();
 }
 
 // 이미지를 container 안에 추가합니다.
-function handleImageUpload(files) {
+function handleImageUpload(files, imageContainerId) {
+    var maxImages = 4; // 최대 이미지 수
+    var imageCount = document.querySelectorAll(`#${imageContainerId} .col`).length; // 현재 추가된 이미지 수
+
     var remainingSlots = maxImages - imageCount;
     if (files.length > remainingSlots) {
-        alert(`이미지는 최대 ${maxImages}개까지 추가할 수 있습니다.`);
+        alert(`이미지는 최대 4개까지 추가할 수 있습니다.`);
         return;
     }
+
+    var imageContainer = document.getElementById(imageContainerId);
 
     Array.from(files).forEach(file => {
         var reader = new FileReader();
@@ -119,10 +139,8 @@ function handleImageUpload(files) {
                 removeImage(imageElement);
             };
 
-            var imageContainer = document.getElementById('imageContainer');
             var imageWrapper = document.createElement('div');
-            imageWrapper.classList.add('col');
-            imageWrapper.id = 'input-col';
+            imageWrapper.classList.add('col', 'input-col');
             imageWrapper.appendChild(imageElement);
             imageWrapper.appendChild(removeIcon);
             imageContainer.appendChild(imageWrapper);
@@ -135,8 +153,10 @@ function handleImageUpload(files) {
 
 // 이미지 삭제
 function removeImage(imageElement) {
-    var imageContainer = document.getElementById('imageContainer');
-    imageContainer.removeChild(imageElement.parentElement);
+    // 이미지 요소의 부모 요소를 찾아서 제거합니다.
+    var imageWrapper = imageElement.parentElement;
+    imageWrapper.remove();
+    
     imageCount--;
 }
 
@@ -145,7 +165,7 @@ function writePost() {
     let content = $('#content').val();
     var imgSources = [];
 
-    $('#input-col').each(function() {
+    $('#imageContainer .input-col').each(function() {
         var img = $(this).find('img');
         imgSources.push(img.attr('src'));
     });
@@ -209,11 +229,13 @@ function deleteOne(memoId) {
 }
 
 // 텍스트에리어 자동 높이 조절
-document.addEventListener('DOMContentLoaded', function () {
-    var textarea = document.getElementById('content');
+document.addEventListener('DOMContentLoaded', function() {
+    var textareas = document.querySelectorAll('textarea');
 
-    textarea.addEventListener('input', function () {
-        this.style.height = 'auto';
-        this.style.height = (this.scrollHeight) + 'px';
+    textareas.forEach(function(textarea) {
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
     });
 });

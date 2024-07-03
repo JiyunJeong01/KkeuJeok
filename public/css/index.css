@@ -170,18 +170,38 @@ textarea.field::placeholder {
 }
 
 .content textarea.te-edit {
-    border-right: none;
-    border-top: none;
-    border-left: none;
+    border: none;
     resize: none;
-    border-bottom: 1px solid #212529;
     width: 100%;
-    font-family: 'Spoqa Han Sans';
+    outline: none;
 }
 
 .footer {
     position: relative;
     height: 40px;
+}
+
+.footer .xi-image {
+    cursor: pointer;
+    position: absolute;
+    display: none;
+    width: 14px;
+    height: 18px;
+    bottom: 12px;
+    left: 17px;
+    color: #868e96;
+}
+
+.footer .xi-paperclip {
+    cursor: pointer;
+    position: absolute;
+    display: none;
+    width: 14px;
+    height: 18px;
+    bottom: 12px;
+    left: 50px;
+    color: #868e96;
+
 }
 
 .footer .xi-star-o {

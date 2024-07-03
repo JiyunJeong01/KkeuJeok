@@ -16,7 +16,7 @@
             <div class="container">
                 <div class="row row-cols-4" id="imageContainer"></div>
             </div>
-            <i class="xi-image xi-x" onclick="addImage()"></i>
+            <i class="xi-image xi-x" onclick="addImage('imageContainer')"></i>
             <i class="xi-paperclip xi-x"></i>
             <img class= "send-img" src="/img/send.png" alt="" onclick="writePost()">
         </div>
@@ -39,23 +39,24 @@
                                 <%= memo.content %>
                             </div>
 
-                            <div class="row row-cols-4" id="imageContainer">
-                                    <% if (memo.files.length !==0) { %>
-                                        <% memo.files.forEach(file => { %>
-                                            <div class="col">
-                                                <img src="<%=file.downloadURL %>">
-                                            </div>
-                                        <% }); %>
-                                    <% }; %>
-                            </div>
-
                             <div id="<%=memo.id %>-editarea" class="edit">
                                 <textarea id="<%=memo.id %>-textarea" class="te-edit" name="" id="" cols="30"
-                                    rows="5"></textarea>
+                                    rows="1"></textarea>
+                            </div>
+                            <div class="row row-cols-4" id="<%=memo.id %>-imageContainer">
+                                <% if (memo.files.length !==0) { %>
+                                    <% memo.files.forEach(file => { %>
+                                        <div class="col input-col">
+                                            <img src="<%=file.downloadURL %>">
+                                        </div>
+                                    <% }); %>
+                                <% }; %>
                             </div>
                         </div>
                         <!-- 버튼 영역-->
                         <div class="footer">
+                            <i id="<%= memo.id %>-image" class="xi-image xi-x" onclick="addImage('<%=memo.id %>-imageContainer')"></i>
+                            <i id="<%= memo.id %>-file" class="xi-paperclip xi-x"></i>
                             <i id="<%= memo.id %>-bookmark" class="xi-star-o xi-x" onclick="bookmark('<%= memo.id %>')" 
                                 style="display: <%= memo.bookmark ? 'none' : 'block' %>;"></i>
                             <i id = "<%=memo.id %>-unbookmark" class="xi-star xi-x" onclick="unBookmark(('<%=memo.id %>'))"
