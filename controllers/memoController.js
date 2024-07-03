@@ -54,8 +54,10 @@ module.exports = {
 
     deleteMemo: async (req, res, next) => {
         try {
+            const userId = req.session.user ? req.session.user.id : 0;
             let memoId = req.params.memoId;
             await MemoModel.deleteMemo(memoId);
+            await FileModel.deleteMemoAndFiles(userId, memoId)
             res.status(200).json({ message: "메모가 성공적으로 삭제되었습니다." });
         } catch (error) {
             console.error(error);
