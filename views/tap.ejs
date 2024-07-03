@@ -38,7 +38,37 @@
 
 <nav class="nav flex-column">
     <a class="link active" aria-current="page" href="/">홈</a>
-    <a class="link" href="#">중요함 (별)</a>
+    <a class="link" href="/bookmark">중요함 (별)</a>
     <a class="link" href="#">파일 목록</a>
     <a class="link" href="#">설정</a>
 </nav>
+
+<head>
+    <script>
+        // 현재 URL을 가져오는 함수
+        function getCurrentUrl() {
+            return window.location.pathname;
+        }
+
+        // 현재 URL에 해당하는 링크를 활성화하는 함수
+        function setActiveLink() {
+            var currentUrl = getCurrentUrl();
+            var links = document.querySelectorAll('.link');
+
+            links.forEach(function(link) {
+                if (link.getAttribute('href') === currentUrl) {
+                    link.classList.add('active');
+                    link.setAttribute('aria-current', 'page');
+                } else {
+                    link.classList.remove('active');
+                    link.removeAttribute('aria-current');
+                }
+            });
+        }
+
+        // 페이지 로드 시 활성 링크 설정
+        document.addEventListener('DOMContentLoaded', function() {
+            setActiveLink();
+        });
+    </script>
+</head>

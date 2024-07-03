@@ -135,6 +135,27 @@ textarea.field::placeholder {
     height: 40px;
 }
 
+.footer .xi-star-o {
+    cursor: pointer;
+    position: absolute;
+    bottom: 12px;
+    right: 101px;
+    width: 14px;
+    height: 18px;
+    color: #868e96;
+}
+
+.footer .xi-star {
+    cursor: pointer;
+    position: absolute;
+    display: none;
+    bottom: 12px;
+    right: 101px;
+    width: 14px;
+    height: 18px;
+    color: #868e96;
+}
+
 .footer img.icon-start-edit {
     cursor: pointer;
     position: absolute;

@@ -5,17 +5,7 @@
 
 <body>
     <div class="wrap">
-        <div class="header">
-            <h2>Memo</h2>
-            <p>
-                저장하고 싶은 내용을 입력해주세요.
-            </p>
-        </div>
-        <div class="area-write">
-            <textarea class="field" placeholder="무슨 일이 일어나고 있나요?" name="content" id="content" cols="30" rows="10"></textarea>
-            <img src="/img/send.png" alt="" onclick="writePost()">
-        </div>
-
+        <h2 style = "color: #52C1FF;">북마크</h2>
         <div id="cards-box" class="area-read">
             <% if (memos.length !==0) { %>
                 <% memos.forEach(memo=> { %>

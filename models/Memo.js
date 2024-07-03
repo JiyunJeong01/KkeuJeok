@@ -5,7 +5,10 @@ const {db} = require('../fbase');
 exports.findAll = async () => {
     try {
         // 'memos' 컬렉션의 모든 문서를 가져옴
-        const querySnapshot = await getDocs(query(collection(db, 'memos'), orderBy('createdAt', 'desc')));
+        const querySnapshot = await getDocs(
+            query(
+                collection(db, 'memos'), 
+                orderBy('createdAt', 'desc')));
         const memos = [];
         querySnapshot.forEach((memo) => {
             // 각 문서 데이터를 객체로 변환하여 배열에 추가
@@ -25,7 +28,11 @@ exports.findAll = async () => {
 exports.findByUserId = async (userId) => {
     try {
         // 'memos' 컬렉션에서 특정 userID를 가진 게시글만 가져옴
-        const querySnapshot = await getDocs(query(collection(db, 'memos'), where('userId', '==', userId), orderBy('createdAt', 'desc')));
+        const querySnapshot = await getDocs(
+            query(
+                collection(db, 'memos'), 
+                where('userId', '==', userId), 
+                orderBy('createdAt', 'desc')));
         const memos = [];
         querySnapshot.forEach((memo) => {
             // 각 문서 데이터를 객체로 변환하여 배열에 추가
@@ -87,6 +94,7 @@ exports.modifiedMemo = async (memoId, newContent) => {
     }
 }
 
+// memo 삭제
 exports.deleteMemo = async (memoId) => {
     try {
         const memoRef = doc(db, 'memos', memoId);
@@ -95,6 +103,71 @@ exports.deleteMemo = async (memoId) => {
         return memoId; 
     } catch (error) {
         console.error('메모 삭제 중 오류:', error);
+        throw error;
+    }
+}
+
+// 북마크 추가
+exports.bookmarkMemo = async (memoId) => {
+    try {
+        const memoRef = doc(db, 'memos', memoId);
+        // 업데이트할 데이터 객체 생성
+        const updateData = {
+            bookmark: true
+        };
+
+        // 해당 문서 업데이트
+        await updateDoc(memoRef, updateData);
+        console.log(`메모(${memoId})가 북마크가 성공적으로 추가되었습니다.`);
+        return memoId; 
+    } catch (error) {
+        console.error('메모 수정 중 오류:', error);
+        throw error;
+    }
+}
+
+// 북마크 삭제
+exports.unBookmarkMemo = async (memoId) => {
+    try {
+        const memoRef = doc(db, 'memos', memoId);
+        // 업데이트할 데이터 객체 생성
+        const updateData = {
+            bookmark: false
+        };
+
+        // 해당 문서 업데이트
+        await updateDoc(memoRef, updateData);
+        console.log(`메모(${memoId}) 북마크가 성공적으로 삭제되었습니다.`);
+        return memoId; 
+    } catch (error) {
+        console.error('메모 수정 중 오류:', error);
+        throw error;
+    }
+}
+
+// 북마크한 글만 모아보기
+exports.findByUserIdAndBookmark = async (userId) => {
+    try {
+        // 'memos' 컬렉션에서 특정 userID를 가진 게시글만 가져옴
+        const querySnapshot = await getDocs(
+            query(
+                collection(db, 'memos'),
+                where('userId', '==', userId),
+                where('bookmark', '==', true),
+                orderBy('createdAt', 'desc')
+            )
+        );
+        const memos = [];
+        querySnapshot.forEach((memo) => {
+            // 각 문서 데이터를 객체로 변환하여 배열에 추가
+            memos.push({
+                id: memo.id,
+                ...memo.data()
+            });
+        });
+        return memos;
+    } catch (error) {
+        console.log("findByUserIdAndBookmark 실행 중 오류:", error);
         throw error;
     }
 }

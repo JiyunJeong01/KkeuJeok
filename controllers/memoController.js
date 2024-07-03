@@ -58,5 +58,40 @@ module.exports = {
         } catch (error) {
             console.error(error);
         }
-    }
+    },
+
+    bookmarkMemo: async (req, res, next) => {
+        try {
+            let memoId = req.params.memoId;
+            await MemoModel.bookmarkMemo(memoId);
+            res.status(200).json({ message: "북마크 되었습니다." });
+        } catch (error) {
+            console.error(error);
+        }
+    },
+
+    unBookmarkMemo: async (req, res, next) => {
+        try {
+            let memoId = req.params.memoId;
+            await MemoModel.unBookmarkMemo(memoId);
+            res.status(200).json({ message: "언북마크 되었습니다." });
+        } catch (error) {
+            console.error(error);
+        }
+    },
+
+    bookmarksLoadingUser: async (req, res, next) => {
+        try {
+            if (req.session.user) {
+                const userId = req.session.user.id;
+                const memos = await MemoModel.findByUserIdAndBookmark(userId);
+                res.locals.memos = memos
+                res.render('bookmark');
+            } else {
+                res.redirect('/home')
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    },
 }

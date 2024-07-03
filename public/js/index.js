@@ -29,6 +29,42 @@ function isValidcontent(content) {
     return true;
 }
 
+// 북마크를 진행합니다.
+function bookmark(id) {
+    $(`#${id}-unbookmark`).css('display', 'block');
+    $(`#${id}-bookmark`).css('display', 'none');
+
+    
+    let data = { 'id' : id };
+
+    fetch(`/bookmark/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+        
+}
+
+// 언북마크를 진행합니다.
+function unBookmark(id) {
+    $(`#${id}-unbookmark`).css('display', 'none');
+    $(`#${id}-bookmark`).css('display', 'block');
+
+    
+    let data = { 'id' : id };
+
+    fetch(`/un-bookmark/${id}`, {
+        method: 'put',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+        
+}
+
 // 수정 버튼을 눌렀을 때, 기존 작성 내용을 textarea 에 전달합니다.
 // 숨길 버튼을 숨기고, 나타낼 버튼을 나타냅니다.
 function editPost(id) {
