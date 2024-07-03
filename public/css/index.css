@@ -16,9 +16,35 @@
 .area-write {
     position: relative;
     width: 538px;
+    min-height: 146px;
+    border-radius: 5px;
+    background-color: #ffffff;
+    resize: none;
 }
 
-.area-write img {
+.area-write .xi-image {
+    cursor: pointer;
+    position: absolute;
+    width: 22.2px;
+    height: 18.7px;
+    bottom: 15px;
+    left: 17px;
+    color: #868e96;
+}
+
+.area-write .xi-paperclip {
+    cursor: pointer;
+    position: absolute;
+    width: 22.2px;
+    height: 18.7px;
+    bottom: 15px;
+    left: 50px;
+    color: #868e96;
+
+}
+
+
+.area-write .send-img {
     cursor: pointer;
     position: absolute;
     width: 22.2px;
@@ -59,12 +85,12 @@
 
 textarea.field {
     width: 538px !important;
-    height: 146px;
-    border-radius: 5px;
-    background-color: #ffffff;
+    height: 120px;
+    min-height: 120px;
     border: none;
     padding: 18px;
     resize: none;
+    outline: none;
 }
 
 textarea.field::placeholder {
@@ -79,6 +105,29 @@ textarea.field::placeholder {
     letter-spacing: -0.96px;
     text-align: left;
     color: #868e96;
+}
+
+.container {
+    padding-bottom: 47px;
+}
+
+.col {
+    position: relative;
+    padding-top: 5px;
+}
+
+.col .xi-close {
+    position: absolute;
+    top: 9px;
+    right: 20px;
+    cursor: pointer;
+}
+
+.col img {
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    border-radius: 15px;
 }
 
 .card {

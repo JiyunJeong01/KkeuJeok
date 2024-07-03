@@ -1,13 +1,13 @@
 const { collection, doc, getDocs, addDoc, updateDoc, deleteDoc, query, orderBy, where } = require('firebase/firestore');
-const {db} = require('../fbase');
-
+const { db } = require('../fbase');
+const { getFilesByMemoId } = require('./File');
 // 전체 게시글 조회
 exports.findAll = async () => {
     try {
         // 'memos' 컬렉션의 모든 문서를 가져옴
         const querySnapshot = await getDocs(
             query(
-                collection(db, 'memos'), 
+                collection(db, 'memos'),
                 orderBy('createdAt', 'desc')));
         const memos = [];
         querySnapshot.forEach((memo) => {
@@ -30,17 +30,19 @@ exports.findByUserId = async (userId) => {
         // 'memos' 컬렉션에서 특정 userID를 가진 게시글만 가져옴
         const querySnapshot = await getDocs(
             query(
-                collection(db, 'memos'), 
-                where('userId', '==', userId), 
+                collection(db, 'memos'),
+                where('userId', '==', userId),
                 orderBy('createdAt', 'desc')));
-        const memos = [];
-        querySnapshot.forEach((memo) => {
-            // 각 문서 데이터를 객체로 변환하여 배열에 추가
-            memos.push({
+
+        // 각 게시글과 관련된 파일 정보를 포함한 배열 반환
+        const memos = await Promise.all(querySnapshot.docs.map(async (memo) => {
+            const files = await getFilesByMemoId(memo.id);
+            return {
                 id: memo.id,
-                ...memo.data()
-            });
-        });
+                ...memo.data(),
+                files: files,
+            };
+        }));
         return memos;
     } catch (error) {
         console.log("findByUserId 실행 중 오류:", error);
@@ -87,7 +89,7 @@ exports.modifiedMemo = async (memoId, newContent) => {
         // 해당 문서 업데이트
         await updateDoc(memoRef, updateData);
         console.log(`메모(${memoId})가 성공적으로 수정되었습니다.`);
-        return memoId; 
+        return memoId;
     } catch (error) {
         console.error('메모 수정 중 오류:', error);
         throw error;
@@ -100,7 +102,7 @@ exports.deleteMemo = async (memoId) => {
         const memoRef = doc(db, 'memos', memoId);
         await deleteDoc(memoRef);
         console.log(`메모(${memoId})가 성공적으로 삭제되었습니다.`);
-        return memoId; 
+        return memoId;
     } catch (error) {
         console.error('메모 삭제 중 오류:', error);
         throw error;
@@ -119,7 +121,7 @@ exports.bookmarkMemo = async (memoId) => {
         // 해당 문서 업데이트
         await updateDoc(memoRef, updateData);
         console.log(`메모(${memoId})가 북마크가 성공적으로 추가되었습니다.`);
-        return memoId; 
+        return memoId;
     } catch (error) {
         console.error('메모 수정 중 오류:', error);
         throw error;
@@ -138,7 +140,7 @@ exports.unBookmarkMemo = async (memoId) => {
         // 해당 문서 업데이트
         await updateDoc(memoRef, updateData);
         console.log(`메모(${memoId}) 북마크가 성공적으로 삭제되었습니다.`);
-        return memoId; 
+        return memoId;
     } catch (error) {
         console.error('메모 수정 중 오류:', error);
         throw error;
@@ -167,7 +169,7 @@ exports.findByUserIdAndBookmark = async (userId) => {
         });
         return memos;
     } catch (error) {
-        console.log("findByUserIdAndBookmark 실행 중 오류:", error);
+        console.log("findByUserId 실행 중 오류:", error);
         throw error;
     }
 }

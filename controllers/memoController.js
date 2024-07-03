@@ -1,4 +1,5 @@
 const MemoModel = require('../models/Memo');
+const FileModel = require('../models/File');
 
 module.exports = {
     memosLoading: async (req, res, next) => {
@@ -29,8 +30,9 @@ module.exports = {
     createMemo: async (req, res, next) => {
         try {
             const userId = req.session.user ? req.session.user.id : 0;
-            let { content } = req.body;
-            await MemoModel.createMemo(userId, content);
+            let { content, imgSources } = req.body;
+            let memoId = await MemoModel.createMemo(userId, content);
+            await FileModel.uploadFile(userId, memoId, imgSources);
             res.status(200).json({ message: "메모가 성공적으로 생성되었습니다." });
         } catch (error) {
             console.error(error);
