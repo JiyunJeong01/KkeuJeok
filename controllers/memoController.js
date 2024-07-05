@@ -41,9 +41,12 @@ module.exports = {
 
     modifiedMemo: async (req, res, next) => {
         try {
+            const userId = req.session.user ? req.session.user.id : 0;
             let memoId = req.params.memoId;
-            let { content } = req.body;
-
+            let { content, imgSources } = req.body;
+            console.log (imgSources)
+            // 수정 기능 보류
+            // await FileModel.modifiedFiles(userId, memoId, imgSources);
             await MemoModel.modifiedMemo(memoId, content);
 
             res.status(200).json({ message: "메모가 성공적으로 수정되었습니다." });
@@ -57,7 +60,7 @@ module.exports = {
             const userId = req.session.user ? req.session.user.id : 0;
             let memoId = req.params.memoId;
             await MemoModel.deleteMemo(memoId);
-            await FileModel.deleteMemoAndFiles(userId, memoId)
+            await FileModel.deleteFiles(userId, memoId)
             res.status(200).json({ message: "메모가 성공적으로 삭제되었습니다." });
         } catch (error) {
             console.error(error);

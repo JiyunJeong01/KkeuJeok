@@ -3,6 +3,11 @@ const { ref, uploadBytes, getDownloadURL, uploadString, deleteObject } = require
 const { db, storage } = require('../fbase');
 const { v4: uuidv4 } = require('uuid');
 
+// Firebase 다운로드 링크 판별 함수
+function isFirebaseDownloadLink(url) {
+    return url.startsWith('https://firebasestorage.googleapis.com/');
+}
+
 // 파일 업로드 및 Firestore에 파일 정보 저장
 exports.uploadFile = async (userId, memoId, files) => {
     try {
@@ -62,8 +67,37 @@ exports.getFilesByMemoId = async (memoId) => {
     }
 }
 
+// 메모 별 파일 수정
+exports.modifiedFiles = async (userId, memoId, takeFiles) => {
+    const files = await exports.getFilesByMemoId(memoId);
+    const storageDeletePromises = [];
+    const firestoreDeletePromises = [];
+
+    files.forEach(file => {
+        // Firebase Storage에서 파일 삭제
+        if (isFirebaseDownloadLink(file.downloadURL)) {
+            const fileRef = ref(storage, `${userId}/${file.fileName}`);
+            storageDeletePromises.push(deleteObject(fileRef));
+        }
+
+        // Firebase Firestore에서 파일 문서 삭제 (Firebase 다운로드 링크인 것은 제외)
+        const fileDocRef = doc(db, 'files', file.id);
+        if (!isFirebaseDownloadLink(file.downloadURL)) {
+            firestoreDeletePromises.push(deleteDoc(fileDocRef));
+        }
+    });
+
+    // 동시에 모든 작업을 실행하고 완료를 기다립니다.
+    await Promise.all(storageDeletePromises);
+    await Promise.all(firestoreDeletePromises);
+
+    const newFile = takeFiles.filter(file => !isFirebaseDownloadLink(file));
+    await uploadFile(userId, memoId, newFile);
+
+}
+
 // 메모 삭제와 관련된 파일 삭제
-exports.deleteMemoAndFiles = async (userId, memoId) => {
+exports.deleteFiles = async (userId, memoId) => {
     try {
         // 메모와 관련된 파일 정보 가져오기
         const files = await exports.getFilesByMemoId(memoId);

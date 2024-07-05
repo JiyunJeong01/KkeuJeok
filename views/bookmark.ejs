@@ -27,6 +27,15 @@
                                 <textarea id="<%=memo.id %>-textarea" class="te-edit" name="" id="" cols="30"
                                     rows="5"></textarea>
                             </div>
+                            <div class="row row-cols-4" id="<%=memo.id %>-imageContainer">
+                                <% if (memo.files.length !==0) { %>
+                                    <% memo.files.forEach(file => { %>
+                                        <div class="col input-col">
+                                            <img src="<%=file.downloadURL %>">
+                                        </div>
+                                    <% }); %>
+                                <% }; %>
+                            </div>
                         </div>
                         <!-- 버튼 영역-->
                         <div class="footer">

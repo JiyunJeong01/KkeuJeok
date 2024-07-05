@@ -70,6 +70,7 @@ function editPost(id) {
     showEdits(id);
 
     // 이미지 편집 모드로 전환
+    /* 수정 기능 보류 --------------------------------------------------------------------
     const imageContainer = document.getElementById(`${id}-imageContainer`);
     const imageCols = imageContainer.querySelectorAll('.input-col');
     imageCols.forEach(col => {
@@ -81,6 +82,7 @@ function editPost(id) {
         };
         col.appendChild(closeIcon);
     });
+    */
 
     let content = $(`#${id}-content`).text().trim();
     $(`#${id}-textarea`).val(content);
@@ -90,16 +92,12 @@ function showEdits(id) {
     $(`#${id}-editarea`).show();
     $(`#${id}-submit`).show();
     $(`#${id}-delete`).show();
-    $(`#${id}-image`).show();
-    $(`#${id}-file`).show();
+    $(`#${id}-image`).hide(); // 수정 기능 보류
+    $(`#${id}-file`).hide(); // 수정 기능 보류
 
     $(`#${id}-content`).hide();
     $(`#${id}-edit`).hide();
 }
-
-// 이미지를 추가합니다.
-var maxImages = 4; // 최대 이미지 수
-var imageCount = document.querySelectorAll('#imageContainer .col').length;// 현재 추가된 이미지 수
 
 function addImage(imageContainerId) {
     var fileInput = document.createElement('input');
@@ -196,13 +194,19 @@ function submitEdit(memoId) {
     // 1. 작성 대상 메모의 content 를 확인합니다.
     let content = $(`#${memoId}-textarea`).val().trim();
 
+    var imgSources = [];
+    $(`#${memoId}-imageContainer .input-col`).each(function() {
+        var img = $(this).find('img');
+        imgSources.push(img.attr('src'));
+    });
+
     // 2. 작성한 메모가 올바른지 isValidcontent 함수를 통해 확인합니다.
     if (isValidcontent(content) == false) {
         return;
     }
 
     // 3. 전달할 data JSON으로 만듭니다.
-    let data = { 'content': content };
+    let data = { 'content': content, 'imgSources': imgSources };
 
     // 4. PUT /memo/{memoId} 에 data를 전달합니다.
     fetch(`/memo/${memoId}`, {

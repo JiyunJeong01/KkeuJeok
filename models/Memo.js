@@ -159,14 +159,16 @@ exports.findByUserIdAndBookmark = async (userId) => {
                 orderBy('createdAt', 'desc')
             )
         );
-        const memos = [];
-        querySnapshot.forEach((memo) => {
-            // 각 문서 데이터를 객체로 변환하여 배열에 추가
-            memos.push({
+
+        // 각 게시글과 관련된 파일 정보를 포함한 배열 반환
+        const memos = await Promise.all(querySnapshot.docs.map(async (memo) => {
+            const files = await getFilesByMemoId(memo.id);
+            return {
                 id: memo.id,
-                ...memo.data()
-            });
-        });
+                ...memo.data(),
+                files: files,
+            };
+        }));
         return memos;
     } catch (error) {
         console.log("findByUserId 실행 중 오류:", error);
