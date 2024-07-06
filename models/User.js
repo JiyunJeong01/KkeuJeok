@@ -82,3 +82,14 @@ exports.changePassword = async (userId, password) => {
     });
     return true;
 }
+
+exports.deleteUser = async (userId) => {
+    try {
+        const userRef = doc(db, 'users', userId);
+        await deleteDoc(userRef);
+        return userId;
+    } catch (error) {
+        console.error('유저 삭제 중 오류', error);
+        throw error;
+    }
+}

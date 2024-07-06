@@ -205,3 +205,38 @@ exports.findByUserIdAndBookmark = async (userId) => {
         throw error;
     }
 }
+
+// 특정 userId를 가진 모든 메모 삭제
+exports.deleteMemosByUserId = async (userId) => {
+    try {
+        // userId와 일치하는 메모들을 쿼리
+        const querySnapshot = await getDocs(
+            query(
+                collection(db, 'memos'),
+                where('userId', '==', userId)));
+
+        // 쿼리 결과가 비어있으면 아무 작업도 하지 않음
+        if (querySnapshot.empty) {
+            return null;
+        }
+
+        // 삭제된 메모들의 memoId 배열
+        const deletedMemoIds = [];
+
+        // 모든 메모를 삭제
+        const deletionPromises = querySnapshot.docs.map(async (memo) => {
+            const memoId = memo.id;
+            const memoRef = doc(db, 'memos', memoId);
+            await deleteDoc(memoRef);
+            deletedMemoIds.push(memoId);
+        });
+
+        // 모든 삭제 작업을 기다림
+        await Promise.all(deletionPromises);
+
+        return deletedMemoIds;
+    } catch (error) {
+        console.error('메모 삭제 중 오류:', error);
+        throw error;
+    }
+}

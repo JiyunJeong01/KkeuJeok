@@ -131,3 +131,38 @@ exports.deleteFiles = async (userId, memoId) => {
         throw error;
     }
 }
+
+// 여러 memoId에 해당하는 파일들을 삭제하는 함수
+exports.deleteFilesByMemoIds = async (userId, memoIds) => {
+    try {
+        const deletionPromises = [];
+
+        // 각 memoId에 대해 파일 삭제 작업 수행
+        for (const memoId of memoIds) {
+            // 메모와 관련된 파일 정보 가져오기
+            const files = await exports.getFilesByMemoId(memoId);
+
+            // Firebase Storage에서 파일 삭제
+            const deleteStoragePromises = files.map(async (file) => {
+                const fileRef = ref(storage, `${userId}/${file.uuid}_${file.fileName}`);
+                await deleteObject(fileRef);
+            });
+            deletionPromises.push(Promise.all(deleteStoragePromises));
+
+            // Firestore에서 파일 문서 삭제
+            const filesCollectionRef = collection(db, 'files');
+            const q = query(filesCollectionRef, where('memoId', '==', memoId));
+            const querySnapshot = await getDocs(q);
+            const deleteFileDocsPromises = querySnapshot.docs.map(async (doc) => {
+                await deleteDoc(doc.ref);
+            });
+            deletionPromises.push(Promise.all(deleteFileDocsPromises));
+        }
+
+        // 모든 삭제 작업을 기다림
+        await Promise.all(deletionPromises);
+    } catch (error) {
+        console.error("파일 삭제 중 오류:", error);
+        throw error;
+    }
+}
