@@ -12,13 +12,16 @@
             </p>
         </div>
         <div class="area-write">
-            <textarea class="field" placeholder="무슨 일이 일어나고 있나요?" name="content" id="content" cols="30" rows="1"></textarea>
-            <div class="container">
-                <div class="row row-cols-4" id="imageContainer"></div>
-            </div>
-            <i class="xi-image xi-x" onclick="addImage('imageContainer')"></i>
-            <i class="xi-paperclip xi-x"></i>
-            <img class= "send-img" src="/img/send.png" alt="" onclick="writePost()">
+            <form id="postForm" name="postForm" method="post" action="/memo" enctype="multipart/form-data" accept-charset="UTF-8">
+                <textarea class="field" placeholder="무슨 일이 일어나고 있나요?" name="content" id="content" cols="30" rows="1"></textarea>
+                <div class="row row-cols-4 imageContainer" id="imageContainer"></div>
+                <div id="fileContainer"></div>
+                <i class="xi-image xi-x" onclick="imageInput();"></i>
+                <i class="xi-paperclip xi-x" onclick="fileInput()"></i>
+                <button type="submit">
+                    <img class="send-img" src="/img/send.png" alt="">
+                </button>
+            </form>
         </div>
 
         <div id="cards-box" class="area-read">
@@ -43,15 +46,30 @@
                                 <textarea id="<%=memo.id %>-textarea" class="te-edit" name="" id="" cols="30"
                                     rows="1"></textarea>
                             </div>
-                            <div class="row row-cols-4" id="<%=memo.id %>-imageContainer">
-                                <% if (memo.files.length !==0) { %>
+                            <% if (memo.files.length !== 0) { %>
+                                <div class="row row-cols-4" id="<%= memo.id %>-imageContainer">
                                     <% memo.files.forEach(file => { %>
-                                        <div class="col input-col">
-                                            <img src="<%=file.downloadURL %>">
-                                        </div>
+                                        <% if (file.type.startsWith('image/')) { %>
+                                            <div class="col input-col file-view">
+                                                <img src="<%= file.downloadURL %>" alt="<%= file.fileName %>">
+                                            </div>
+                                        <% } %>
                                     <% }); %>
-                                <% }; %>
-                            </div>
+                                </div>
+                            
+                                <div id="<%= memo.id %>-fileContainer">
+                                    <% memo.files.forEach(file => { %>
+                                        <% if (!file.type.startsWith('image/')) { %>
+                                            <a href="<%= file.downloadURL %>" download>
+                                                <div class="col input-col file-col file-view">
+                                                    <i class="xi-file-download-o xi-2x"></i>
+                                                    <span class="file-name"><%= file.fileName %></span>
+                                                </div>
+                                            </a>
+                                        <% } %>
+                                    <% }); %>
+                                </div>
+                            <% } %>
                         </div>
                         <!-- 버튼 영역-->
                         <div class="footer">

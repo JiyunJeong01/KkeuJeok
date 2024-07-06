@@ -1,5 +1,6 @@
 const MemoModel = require('../models/Memo');
 const FileModel = require('../models/File');
+Busboy = require('busboy');
 
 module.exports = {
     memosLoading: async (req, res, next) => {
@@ -30,10 +31,15 @@ module.exports = {
     createMemo: async (req, res, next) => {
         try {
             const userId = req.session.user ? req.session.user.id : 0;
-            let { content, imgSources } = req.body;
+            const content = req.body.content; // textarea의 내용
+
             let memoId = await MemoModel.createMemo(userId, content);
-            await FileModel.uploadFile(userId, memoId, imgSources);
-            res.status(200).json({ message: "메모가 성공적으로 생성되었습니다." });
+
+            if (req.files && req.files.length > 0) {
+                await FileModel.uploadFile(userId, memoId, req.files);
+              }
+            
+              res.send('<script>alert("메모가 생성되었습니다."); window.location.replace("/");</script>');
         } catch (error) {
             console.error(error);
         }
@@ -44,7 +50,7 @@ module.exports = {
             const userId = req.session.user ? req.session.user.id : 0;
             let memoId = req.params.memoId;
             let { content, imgSources } = req.body;
-            console.log (imgSources)
+            console.log(imgSources)
             // 수정 기능 보류
             // await FileModel.modifiedFiles(userId, memoId, imgSources);
             await MemoModel.modifiedMemo(memoId, content);

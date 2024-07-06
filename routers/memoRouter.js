@@ -1,9 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const memoController = require('../controllers/memoController');
+const multer  = require('multer');
+const upload = multer();
+
 
 router.get("/", memoController.memosLoadingUser);
-router.post("/memo",memoController.createMemo);
+router.post("/memo",upload.array('files', 5),memoController.createMemo);
 router.put("/memo/:memoId",memoController.modifiedMemo);
 router.delete("/memo/:memoId",memoController.deleteMemo);
 

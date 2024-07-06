@@ -51,7 +51,7 @@ app.use(express.static("public"));
 
 // 데이터 요청 및 파싱 처리
 app.use(methodOverride("_method", { methods: ["POST", "GET"] }));
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 

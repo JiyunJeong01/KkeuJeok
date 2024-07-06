@@ -16,18 +16,27 @@ function formatTimeStamp(timeStamp, dateSeparator = "-", timeSeparator = ":") {
     return formattedDateTime;
 }
 
-// 사용자가 내용을 올바르게 입력하였는지 확인합니다.
-function isValidcontent(content) {
-    if (content == '') {
-        alert('내용을 입력해주세요');
-        return false;
-    }
-    if (content.trim().length > 140) {
-        alert('공백 포함 140자 이하로 입력해주세요');
-        return false;
-    }
-    return true;
-}
+// 텍스트에리어 자동 높이 조절
+document.addEventListener('DOMContentLoaded', function () {
+    var textareas = document.querySelectorAll('textarea');
+
+    textareas.forEach(function (textarea) {
+        textarea.addEventListener('input', function () {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    // 파일 추가 버튼을 클릭하여 파일을 추가합니다.
+    document.getElementById('fileInput').onchange = function (event) {
+        handleFileUpload(event.target.files, 'fileContainer', 'imageContainer');
+    };
+
+});
+
 
 // 북마크를 진행합니다.
 function bookmark(id) {
@@ -70,7 +79,7 @@ function editPost(id) {
     showEdits(id);
 
     // 이미지 편집 모드로 전환
-    /* 수정 기능 보류 --------------------------------------------------------------------
+    /* 수정 기능 보류
     const imageContainer = document.getElementById(`${id}-imageContainer`);
     const imageCols = imageContainer.querySelectorAll('.input-col');
     imageCols.forEach(col => {
@@ -99,94 +108,143 @@ function showEdits(id) {
     $(`#${id}-edit`).hide();
 }
 
-function addImage(imageContainerId) {
-    var fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/*';
-    fileInput.multiple = true;
-    fileInput.onchange = function (event) {
-        handleImageUpload(event.target.files, imageContainerId);
+// 이미지 input을 form에 추가합니다.
+function imageInput() {
+    const form = document.getElementById('postForm');
+
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.id = "imageInput";
+    input.accept = 'image/*';
+    input.style.display = 'none';
+    input.name = `files`;
+
+    input.onchange = function (event) {
+        handleImageUpload(event.target.files, 'imageContainer', 'fileContainer', input);
     };
-    fileInput.click();
+
+    form.appendChild(input); // input 요소를 컨테이너에 추가
+    input.click();
 }
 
-// 이미지를 container 안에 추가합니다.
-function handleImageUpload(files, imageContainerId) {
-    var maxImages = 4; // 최대 이미지 수
-    var imageCount = document.querySelectorAll(`#${imageContainerId} .col`).length; // 현재 추가된 이미지 수
+// 이미지를 미리보기를 imageContainer 안에 추가합니다.
+function handleImageUpload(files, imageContainerId, fileContainerId, inputElement) {
+    const maxImages = 4; // 최대 이미지 수
+    const imageContainer = document.getElementById(imageContainerId);
+    const fileContainer = document.getElementById(fileContainerId); // 현재 추가된 파일
 
-    var remainingSlots = maxImages - imageCount;
+    // 이미 추가된 이미지 수를 계산
+    const imageCount = imageContainer.querySelectorAll('.col').length;
+
+    // 최대 이미지 수를 초과한 경우 알림
+    const remainingSlots = maxImages - imageCount;
     if (files.length > remainingSlots) {
-        alert(`이미지는 최대 4개까지 추가할 수 있습니다.`);
+        alert(`이미지는 최대 ${maxImages}개까지 추가할 수 있습니다.`);
         return;
     }
 
-    var imageContainer = document.getElementById(imageContainerId);
+    // 파일과 이미지를 동시에 추가할 수 없도록 체크
+    if (fileContainer.querySelector('.col')) {
+        alert(`파일과 이미지를 동시에 추가할 수 없습니다.`);
+        return;
+    }
 
+    // 파일들을 처리하는 함수
     Array.from(files).forEach(file => {
-        var reader = new FileReader();
+        const reader = new FileReader();
         reader.onload = function (event) {
-            var imageUrl = event.target.result;
+            const imageUrl = event.target.result;
 
-            var imageElement = document.createElement('img');
+            // 이미지 wrapper 생성
+            const imageWrapper = document.createElement('div');
+            imageWrapper.classList.add('col', 'input-col');
+
+            // 이미지 엘리먼트 생성
+            const imageElement = document.createElement('img');
             imageElement.src = imageUrl;
 
-            var removeIcon = document.createElement('i');
+            // 이미지 제거 아이콘 생성
+            const removeIcon = document.createElement('i');
             removeIcon.classList.add('xi-close');
             removeIcon.onclick = function () {
-                removeImage(imageElement);
+                removeImage(imageWrapper, inputElement);
             };
 
-            var imageWrapper = document.createElement('div');
-            imageWrapper.classList.add('col', 'input-col');
             imageWrapper.appendChild(imageElement);
             imageWrapper.appendChild(removeIcon);
             imageContainer.appendChild(imageWrapper);
-
-            imageCount++;
         };
+
+        // 파일을 읽어들임
         reader.readAsDataURL(file);
     });
 }
 
 // 이미지 삭제
-function removeImage(imageElement) {
-    // 이미지 요소의 부모 요소를 찾아서 제거합니다.
-    var imageWrapper = imageElement.parentElement;
-    imageWrapper.remove();
-    
-    imageCount--;
+function removeImage(imageWrapper, inputElement) {
+    imageWrapper.parentElement.removeChild(imageWrapper);
+    inputElement.parentNode.removeChild(inputElement);
 }
 
-// 메모를 생성합니다.
-function writePost() {
-    let content = $('#content').val();
-    var imgSources = [];
+// 파일 input을 form에 추가합니다.
+function fileInput() {
+    const form = document.getElementById('postForm');
 
-    $('#imageContainer .input-col').each(function() {
-        var img = $(this).find('img');
-        imgSources.push(img.attr('src'));
-    });
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.id = "fileInput";
+    input.style.display = 'none';
+    input.name = `files`;
 
-    // 작성한 메모가 올바른지 isValidcontent 함수를 통해 확인합니다.
-    if (isValidcontent(content) == false) {
+    input.onchange = function (event) {
+        handleFileUpload(event.target.files, 'fileContainer', 'imageContainer', input);
+    };
+
+    form.appendChild(input); // input 요소를 컨테이너에 추가
+    input.click();
+}
+
+// 파일 이미지를 container 안에 추가합니다.
+function handleFileUpload(file, fileContainerId, imageContainerId, inputElement) {
+    const fileContainer = document.getElementById(fileContainerId);
+    const imageContainer = document.getElementById(imageContainerId);
+
+    if (fileContainer.querySelector('.col')) {
+        alert('파일은 1개까지 추가할 수 있습니다.');
+        return;
+    }
+    if (imageContainer.querySelector('.col')) {
+        alert(`파일과 이미지를 동시에 추가할 수 없습니다.`);
         return;
     }
 
-    // 3. 전달할 data JSON으로 만듭니다.
-    let data = { 'content': content, 'imgSources': imgSources };
+    const fileWrapper = document.createElement('div');
+    fileWrapper.classList.add('col', 'input-col', 'file-col');
 
-    // 4. POST memo 에 data를 전달합니다.
-    fetch('/memo', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    }).then(data => {
-        alert('메시지가 성공적으로 작성되었습니다.');
-        window.location.reload();
-    })
+    const imageElement = document.createElement('i');
+    imageElement.classList.add('xi-file-download-o', 'xi-2x');
+
+    const fileNameElement = document.createElement('span');
+    fileNameElement.classList.add('file-name');
+    fileNameElement.textContent = file[0].name;
+
+    const removeIcon = document.createElement('i');
+    removeIcon.classList.add('xi-close');
+    removeIcon.onclick = function () {
+        removeFile(fileWrapper, inputElement);
+    };
+
+    fileWrapper.appendChild(imageElement);
+    fileWrapper.appendChild(removeIcon);
+    fileWrapper.appendChild(fileNameElement);
+    fileContainer.appendChild(fileWrapper);
+};
+
+
+// 파일을 삭제합니다.
+function removeFile(fileWrapper, inputElement) {
+    fileWrapper.parentNode.removeChild(fileWrapper);
+    inputElement.parentNode.removeChild(inputElement);
 }
 
 // 메모를 수정합니다.
@@ -195,7 +253,7 @@ function submitEdit(memoId) {
     let content = $(`#${memoId}-textarea`).val().trim();
 
     var imgSources = [];
-    $(`#${memoId}-imageContainer .input-col`).each(function() {
+    $(`#${memoId}-imageContainer .input-col`).each(function () {
         var img = $(this).find('img');
         imgSources.push(img.attr('src'));
     });
@@ -231,15 +289,3 @@ function deleteOne(memoId) {
         window.location.reload();
     })
 }
-
-// 텍스트에리어 자동 높이 조절
-document.addEventListener('DOMContentLoaded', function() {
-    var textareas = document.querySelectorAll('textarea');
-
-    textareas.forEach(function(textarea) {
-        textarea.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = (this.scrollHeight) + 'px';
-        });
-    });
-});

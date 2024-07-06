@@ -8,23 +8,26 @@ function isFirebaseDownloadLink(url) {
     return url.startsWith('https://firebasestorage.googleapis.com/');
 }
 
-// 파일 업로드 및 Firestore에 파일 정보 저장
+// 파일 업로드 및 Firestore에 이미지 정보 저장
 exports.uploadFile = async (userId, memoId, files) => {
     try {
-        const uploadTasks = files.map(async (file) => {
-            const fileName = uuidv4()
-            // Firebase Storage에서 파일 업로드
-            const storageRef = ref(storage, `${userId}/${fileName}`);
+        // Firebase Storage에서 파일 업로드
 
-            await uploadString(storageRef, file, 'data_url');
+        const uploadTasks = files.map(async (file) => {
+            const fileName = Buffer.from(file.originalname, 'ascii').toString('utf8' );
+            const type = file.mimetype;
+            // Firebase Storage에서 파일 업로드
+            const fileRef = ref(storage, `${userId}/${fileName}`);
+            await uploadBytes(fileRef, file.buffer);
 
             // 업로드된 파일의 다운로드 URL 가져오기
-            const downloadURL = await getDownloadURL(storageRef);
+            const downloadURL = await getDownloadURL(fileRef);
 
             // Firestore에 파일 메타데이터 저장
             const fileMetadata = {
                 memoId,
                 fileName,
+                type,
                 downloadURL,
             };
 
@@ -36,13 +39,14 @@ exports.uploadFile = async (userId, memoId, files) => {
 
         // 모든 파일 업로드 및 메타데이터 저장 작업을 병렬로 처리
         const results = await Promise.all(uploadTasks);
-
         return results;
+
     } catch (error) {
         console.error("파일 업로드 및 저장 중 오류:", error);
         throw error;
     }
 }
+
 
 // 메모 별 파일 정보 로딩
 exports.getFilesByMemoId = async (memoId) => {
@@ -56,6 +60,7 @@ exports.getFilesByMemoId = async (memoId) => {
             files.push({
                 fileId: doc.id,
                 fileName: doc.data().fileName,
+                type: doc.data().type,
                 downloadURL: doc.data().downloadURL,
             });
         });
@@ -87,7 +92,7 @@ exports.modifiedFiles = async (userId, memoId, takeFiles) => {
         }
     });
 
-    // 동시에 모든 작업을 실행하고 완료를 기다립니다.
+    // 동시에 모든 작업을 실행하고 완료를 기다린다.
     await Promise.all(storageDeletePromises);
     await Promise.all(firestoreDeletePromises);
 

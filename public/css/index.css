@@ -107,8 +107,8 @@ textarea.field::placeholder {
     color: #868e96;
 }
 
-.container {
-    padding-bottom: 47px;
+.imageContainer {
+    padding: 0px 15px 15px 15px;
 }
 
 .col {
@@ -124,10 +124,30 @@ textarea.field::placeholder {
 }
 
 .col img {
-    width:100%;
-    height:100%;
-    object-fit:cover;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     border-radius: 15px;
+}
+
+.xi-file-download-o {
+    padding-left: 5px;
+}
+.file-col {
+    bottom: 14px;
+    margin: 10px;
+    padding: 12px;
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-radius: 36px;
+    cursor: pointer;
+}
+
+.file-name{
+    position: absolute;
+    font-size: 10pt;
+    font-weight: 300;
+    top: 20px;
+    left: 60px;
 }
 
 .card {
@@ -164,6 +184,9 @@ textarea.field::placeholder {
     word-wrap: break-word;
     word-break: break-all;
 }
+.content > div:first-child {
+    margin-top: 7px;
+}
 
 .content div.edit {
     display: none;
@@ -174,6 +197,13 @@ textarea.field::placeholder {
     resize: none;
     width: 100%;
     outline: none;
+}
+
+.file-view {
+    bottom: 0;
+    margin: 0;
+    margin-top: 3px;
+    color: black;
 }
 
 .footer {
