@@ -1,4 +1,4 @@
-const { collection, doc, getDocs, addDoc, updateDoc, deleteDoc, query, orderBy, where } = require('firebase/firestore');
+const { collection, doc, getDocs,getDoc, addDoc, updateDoc, deleteDoc, query, orderBy, where } = require('firebase/firestore');
 const { db } = require('../fbase');
 
 // 유저 찾기
@@ -6,7 +6,7 @@ exports.getUserByEmail = async (email) => {
     try {
         // 'users' 컬렉션에서 특정 emila을 가진 유저만 가져옴
         const querySnapshot = await getDocs(query(collection(db, 'users'), where('email', '==', email)));
-        
+
         // 문서가 존재하지 않는 경우 null 반환
         if (querySnapshot.empty) {
             return null;
@@ -48,4 +48,37 @@ exports.creatdUser = async (email, name, password) => {
         console.error("유저 추가 중 오류:", error);
         throw error;
     }
+}
+
+// userId로 사용자 정보 조회
+exports.getUserById = async (userId) => {
+    try {
+        // 'users' 컬렉션에서 userId와 일치하는 사용자 문서 가져오기
+        const userRef = doc(db, 'users', userId);
+        const userDoc = await getDoc(userRef);
+
+        if (!userDoc.exists) {
+            throw new Error('해당 userId를 가진 사용자를 찾을 수 없습니다.');
+        }
+
+        // 사용자 정보 반환
+        return {
+            id: userDoc.id,
+            ...userDoc.data()
+        };
+    } catch (error) {
+        console.error('사용자 정보 조회 중 오류:', error);
+        throw error;
+    }
+}
+
+// 비밀번호 변경
+exports.changePassword = async (userId, password) => {
+    const userRef = doc(db, 'users', userId);
+
+    // 해당 사용자 문서 업데이트
+    await updateDoc(userRef, {
+        password: password
+    });
+    return true;
 }

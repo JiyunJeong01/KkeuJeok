@@ -1,0 +1,30 @@
+<head>
+    <link rel="stylesheet" href="/css/setting.css">
+    <script src="/js/setting.js"></script>
+</head>
+
+<body>
+    <div class="wrap">
+        <h2 style = "color: #52C1FF;">설정</h2>
+
+        <h5>비밀번호 변경</h5>
+        <form action="/setting/change-password" method="POST">
+            <input type="password" id="current-password" name="currentPassword" placeholder="현재 비밀번호" required>
+
+            <input type="password" id="new-password" name="newPassword" placeholder="새 비밀번호" required>
+            <input type="password" id="confirm-password" name="confirmPassword" placeholder="비밀번호 확인" required>
+
+            <input type="submit" value="비밀번호 변경">
+        </form>
+
+        <hr>
+
+        <h5>회원탈퇴</h5>
+        <form action="/setting/delete-account" method="POST" class="danger">
+            <input type="hidden" name="_method" value="DELETE">
+            <input type="password" id="password" name="password" placeholder="현재 비밀번호" required>
+            <input type="submit" value="회원탈퇴">
+        </form>
+        
+    </div>
+</body>

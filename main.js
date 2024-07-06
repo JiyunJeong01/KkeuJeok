@@ -36,22 +36,22 @@ app.get('/session-data', (req, res) => {
 });
 /////////////////////////////////////////
 
+// Method Override 설정
+app.use(methodOverride('_method'));
+
 // 쿠키 사용
 app.use(cookieParser());
 
-// JSON데이터의 최대 크기 설정
+// JSON 데이터의 최대 크기 설정
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
-
 
 // 레이아웃 설정
 app.use(layouts);
 app.use(express.static("public"));
 
-
 // 데이터 요청 및 파싱 처리
-app.use(methodOverride("_method", { methods: ["POST", "GET"] }));
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 
@@ -60,10 +60,12 @@ app.use(express.json());
 const homeRouter = require('./routers/homeRouter');
 const memoRouter = require('./routers/memoRouter');
 const authRouter = require('./routers/authRouter');
+const settingRouter = require('./routers/settingRouter');
 
 app.use("/home", homeRouter);
 app.use("/", memoRouter);
 app.use("/", authRouter);
+app.use("/setting", settingRouter);
 /////////////////////////////////////////
 
 // 포트 및 뷰 엔진 설정
