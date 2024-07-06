@@ -1,0 +1,78 @@
+<head>
+    <link rel="stylesheet" href="/css/index.css">
+    <script src="/js/index.js"></script>
+</head>
+
+<body>
+    <div class="wrap">
+        <h2 style = "color: #52C1FF;">검색 결과</h2>
+        <div id="cards-box" class="area-read">
+            <% if (memos.length !==0) { %>
+                <% memos.forEach(memo=> { %>
+                    <div class="card">
+                        <!-- date/username 영역 -->
+                        <div class="metadata">
+                            <div class="date">
+                                <script>
+                                    document.write(formatTimeStamp('<%= memo.createdAt.seconds %>'));
+                                </script>
+                            </div>
+                        </div>
+                        <!-- content 조회/수정 영역-->
+                        <div class="content">
+                            <div id="<%=memo.id %>-content" class="text">
+                                <%= memo.content %>
+                            </div>
+
+                            <div id="<%=memo.id %>-editarea" class="edit">
+                                <textarea id="<%=memo.id %>-textarea" class="te-edit" name="" id="" cols="30"
+                                    rows="1"></textarea>
+                            </div>
+                            <% if (memo.files.length !== 0) { %>
+                                <div class="row row-cols-4" id="<%= memo.id %>-imageContainer">
+                                    <% memo.files.forEach(file => { %>
+                                        <% if (file.type.startsWith('image/')) { %>
+                                            <div class="col input-col file-view">
+                                                <img src="<%= file.downloadURL %>" alt="<%= file.fileName %>">
+                                            </div>
+                                        <% } %>
+                                    <% }); %>
+                                </div>
+                            
+                                <div id="<%= memo.id %>-fileContainer">
+                                    <% memo.files.forEach(file => { %>
+                                        <% if (!file.type.startsWith('image/')) { %>
+                                            <a href="<%= file.downloadURL %>" download>
+                                                <div class="col input-col file-col file-view">
+                                                    <i class="xi-file-download-o xi-2x"></i>
+                                                    <span class="file-name"><%= file.fileName %></span>
+                                                </div>
+                                            </a>
+                                        <% } %>
+                                    <% }); %>
+                                </div>
+                            <% } %>
+                        </div>
+                        <!-- 버튼 영역-->
+                        <div class="footer">
+                            <i id="<%= memo.id %>-image" class="xi-image xi-x" onclick="addImage('<%=memo.id %>-imageContainer')"></i>
+                            <i id="<%= memo.id %>-file" class="xi-paperclip xi-x"></i>
+                            <i id="<%= memo.id %>-bookmark" class="xi-star-o xi-x" onclick="bookmark('<%= memo.id %>')" 
+                                style="display: <%= memo.bookmark ? 'none' : 'block' %>;"></i>
+                            <i id = "<%=memo.id %>-unbookmark" class="xi-star xi-x" onclick="unBookmark(('<%=memo.id %>'))"
+                                style="display: <%= memo.bookmark ? 'block' : 'none' %>;"></i>
+                            <img id="<%=memo.id %>-edit" class="icon-start-edit" src="/img/edit.png" alt=""
+                                onclick="editPost('<%=memo.id %>')">
+                            <img id="<%=memo.id %>-delete" class="icon-delete" src="/img/delete.png" alt=""
+                                onclick="deleteOne('<%=memo.id %>')">
+                            <img id="<%=memo.id %>-submit" class="icon-end-edit" src="/img/done.png" alt=""
+                                onclick="submitEdit('<%=memo.id %>')">
+                        </div>
+                    </div>
+                    <% }); %>
+                        <% }; %>
+        </div>
+    </div>
+</body>
+
+</html>

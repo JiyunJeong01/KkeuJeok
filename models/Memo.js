@@ -50,6 +50,36 @@ exports.findByUserId = async (userId) => {
     }
 }
 
+// 검색된 게시글 조회
+exports.searchMemo = async (userId, queryString) => {
+    try {
+        // 'memos' 컬렉션에서 특정 userId를 가지며, content에 queryString이 포함된 게시글만 가져옴
+        const querySnapshot = await getDocs(
+            query(
+                collection(db, 'memos'),
+                where('userId', '==', userId),
+                where('content', '>=', queryString),
+                where('content', '<=', queryString + '\uf8ff'),
+                orderBy('createdAt', 'desc')
+            )
+        );
+
+        // 각 게시글과 관련된 파일 정보를 포함한 배열 반환
+        const memos = await Promise.all(querySnapshot.docs.map(async (memo) => {
+            const files = await getFilesByMemoId(memo.id);
+            return {
+                id: memo.id,
+                ...memo.data(),
+                files: files,
+            };
+        }));
+        return memos;
+    } catch (error) {
+        console.log("searchMemo 실행 중 오류:", error);
+        throw error;
+    }
+}
+
 // memo 추가
 exports.createMemo = async (userId, content) => {
     try {

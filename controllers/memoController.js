@@ -37,9 +37,9 @@ module.exports = {
 
             if (req.files && req.files.length > 0) {
                 await FileModel.uploadFile(userId, memoId, req.files);
-              }
-            
-              res.send('<script>alert("메모가 생성되었습니다."); window.location.replace("/");</script>');
+            }
+
+            res.send('<script>alert("메모가 생성되었습니다."); window.location.replace("/");</script>');
         } catch (error) {
             console.error(error);
         }
@@ -68,6 +68,22 @@ module.exports = {
             await MemoModel.deleteMemo(memoId);
             await FileModel.deleteFiles(userId, memoId)
             res.status(200).json({ message: "메모가 성공적으로 삭제되었습니다." });
+        } catch (error) {
+            console.error(error);
+        }
+    },
+
+    searchMemo: async (req, res, next) => {
+        try {
+            if (req.session.user) {
+                const userId = req.session.user.id;
+                const query = req.query.q;
+                const memos = await MemoModel.searchMemo(userId, query);
+                res.locals.memos = memos
+                res.render('search');
+            } else {
+                res.redirect('/home')
+            }
         } catch (error) {
             console.error(error);
         }
