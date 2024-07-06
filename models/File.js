@@ -16,8 +16,9 @@ exports.uploadFile = async (userId, memoId, files) => {
         const uploadTasks = files.map(async (file) => {
             const fileName = Buffer.from(file.originalname, 'ascii').toString('utf8' );
             const type = file.mimetype;
+            const uuid = uuidv4();
             // Firebase Storage에서 파일 업로드
-            const fileRef = ref(storage, `${userId}/${fileName}`);
+            const fileRef = ref(storage, `${userId}/${uuid}`);
             await uploadBytes(fileRef, file.buffer);
 
             // 업로드된 파일의 다운로드 URL 가져오기
@@ -26,6 +27,7 @@ exports.uploadFile = async (userId, memoId, files) => {
             // Firestore에 파일 메타데이터 저장
             const fileMetadata = {
                 memoId,
+                uuid,
                 fileName,
                 type,
                 downloadURL,
@@ -60,6 +62,7 @@ exports.getFilesByMemoId = async (memoId) => {
             files.push({
                 fileId: doc.id,
                 fileName: doc.data().fileName,
+                uuid: doc.data().uuid,
                 type: doc.data().type,
                 downloadURL: doc.data().downloadURL,
             });
@@ -109,7 +112,7 @@ exports.deleteFiles = async (userId, memoId) => {
 
         // Firebase Storage에서 파일 삭제
         const deletePromises = files.map(async (file) => {
-            const fileRef = ref(storage, `${userId}/${file.fileName}`);
+            const fileRef = ref(storage, `${userId}/${file.uuid}`);
             await deleteObject(fileRef);
         });
         await Promise.all(deletePromises);
