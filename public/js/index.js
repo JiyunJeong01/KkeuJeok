@@ -28,16 +28,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-document.addEventListener('DOMContentLoaded', function () {
-
-    // 파일 추가 버튼을 클릭하여 파일을 추가합니다.
-    document.getElementById('fileInput').onchange = function (event) {
-        handleFileUpload(event.target.files, 'fileContainer', 'imageContainer');
-    };
-
-});
-
-
 // 북마크를 진행합니다.
 function bookmark(id) {
     $(`#${id}-unbookmark`).css('display', 'block');
