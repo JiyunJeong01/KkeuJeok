@@ -28,6 +28,22 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+// 이미지 클릭 시 큰 팝업창 보이게 하기.
+function imageShow(src) {
+    const img = document.getElementById('image-box-content');
+    const imageBox = document.getElementById('image-box');
+    imageBox.style.display = 'flex';
+    img.src = src;
+}
+
+// 팝업창 클릭시 없애기
+function imageClose(src) {
+    const img = document.getElementById('image-box-content');
+    const imageBox = document.getElementById('image-box');
+    imageBox.style.display = 'none';
+    img.src = '';
+}
+
 // 북마크를 진행합니다.
 function bookmark(id) {
     $(`#${id}-unbookmark`).css('display', 'block');

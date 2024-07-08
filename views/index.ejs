@@ -4,6 +4,11 @@
 </head>
 
 <body>
+    <div class="image-box" id="image-box" onclick="imageClose()">
+        <div class="image-back">
+            <img src="" alt="" class="image-box-content" id="image-box-content">
+        </div>
+    </div>
     <div class="wrap">
         <div class="header">
             <h2>Memo</h2>
@@ -51,7 +56,7 @@
                                     <% memo.files.forEach(file => { %>
                                         <% if (file.type.startsWith('image/')) { %>
                                             <div class="col input-col file-view">
-                                                <img src="<%= file.downloadURL %>" alt="<%= file.fileName %>">
+                                                <img src="<%= file.downloadURL %>" alt="<%= file.fileName %>" onclick="imageShow(this.src)">
                                             </div>
                                         <% } %>
                                     <% }); %>

@@ -3,7 +3,30 @@
 .area-edit {
     display: none;
 }
+.image-box {
+    height: 100%;
+    width: 100%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+.image-back {
+    height: 50%;
+    width: 50%;
+    background-color: #00000082;
+    border-radius: 50px;
+    align-content: center;
+    text-align: center;
+}
 
+.image-box-content{
+    max-width: 80%;
+    max-height: 80%;
+}
 .wrap {
     width: 538px;
     margin: 10px auto;
