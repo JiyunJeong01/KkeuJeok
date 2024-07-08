@@ -242,19 +242,8 @@ function submitEdit(memoId) {
     // 1. 작성 대상 메모의 content 를 확인합니다.
     let content = $(`#${memoId}-textarea`).val().trim();
 
-    var imgSources = [];
-    $(`#${memoId}-imageContainer .input-col`).each(function () {
-        var img = $(this).find('img');
-        imgSources.push(img.attr('src'));
-    });
-
-    // 2. 작성한 메모가 올바른지 isValidcontent 함수를 통해 확인합니다.
-    if (isValidcontent(content) == false) {
-        return;
-    }
-
     // 3. 전달할 data JSON으로 만듭니다.
-    let data = { 'content': content, 'imgSources': imgSources };
+    let data = { 'content': content };
 
     // 4. PUT /memo/{memoId} 에 data를 전달합니다.
     fetch(`/memo/${memoId}`, {
