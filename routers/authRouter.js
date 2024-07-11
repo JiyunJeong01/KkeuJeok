@@ -2,13 +2,20 @@ const express = require('express'),
 router = express.Router(),
 authController = require('../controllers/authController');
 
-router.get("/login", authController.loginPage);
-router.post("/submit-login", authController.login);
-router.get("/logout", authController.logout);
+// errorwrapper 정의
+const wrapAsyncController = (fn) => {
+    return (req, res, next) => {
+        Promise.resolve(fn(req, res, next)).catch(next);
+    }
+  }
 
-router.get("/account", authController.accountPage);
-router.post("/check-email", authController.checkEmailDuplicate);
-router.post("/auth-email", authController.emailAuth);
-router.post("/submit-account", authController.account);
+router.get("/login", wrapAsyncController(authController.loginPage));
+router.post("/submit-login", wrapAsyncController(authController.login));
+router.get("/logout", wrapAsyncController(authController.logout));
+
+router.get("/account", wrapAsyncController(authController.accountPage));
+router.post("/check-email", wrapAsyncController(authController.checkEmailDuplicate));
+router.post("/auth-email", wrapAsyncController(authController.emailAuth));
+router.post("/submit-account", wrapAsyncController(authController.account));
 
 module.exports = router;

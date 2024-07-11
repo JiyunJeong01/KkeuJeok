@@ -2,8 +2,15 @@ const express = require('express');
 const router = express.Router();
 const settingController = require('../controllers/settingController');
 
-router.get("/", settingController.loadSetting);
-router.post("/change-password",settingController.changePassword);
-router.post("/delete-account",settingController.deleteAccount);
+// errorwrapper 정의
+const wrapAsyncController = (fn) => {
+    return (req, res, next) => {
+        Promise.resolve(fn(req, res, next)).catch(next);
+    }
+  }
+
+router.get("/", wrapAsyncController(settingController.loadSetting));
+router.post("/change-password", wrapAsyncController(settingController.changePassword));
+router.post("/delete-account", wrapAsyncController(settingController.deleteAccount));
 
 module.exports = router;

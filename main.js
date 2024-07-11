@@ -53,10 +53,16 @@ app.use("/", authRouter);
 app.use("/setting", settingRouter);
 /////////////////////////////////////////
 
+
+// 에러 핸들링 추가
+const errorController = require('./controllers/errorController');
+app.use(errorController.logErrors);
+app.use(errorController.respondNoResourceFound);
+app.use(errorController.respondInternalError);
+
 // 포트 및 뷰 엔진 설정
 app.set("port", process.env.PORT || 80);
 app.set("view engine", "ejs");
-
 
 // 최종적으로 제대로 작동하는지 확인 
 app.listen(app.get("port"), () => {

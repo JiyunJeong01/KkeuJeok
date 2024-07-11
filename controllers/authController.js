@@ -2,12 +2,10 @@ const userModel = require('../models/User');
 const bcryptjs = require('bcryptjs');
 const smtpTransport = require('../email');
 
-
 // 랜덤 인증번호 생성 코드
-var generateRandomNumber = function (min, max) {
-  var randNum = Math.floor(Math.random() * (max - min + 1)) + min;
-  return randNum;
-}
+const generateRandomNumber = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
 
 module.exports = {
   // 로그인 페이지 로드
@@ -18,58 +16,48 @@ module.exports = {
 
   // 로그인 처리
   login: async (req, res) => {
-    try {
-      const { email, password } = req.body;
+    const { email, password } = req.body;
 
-      // 입력된 이메일로 사용자 찾기
-      const user = await userModel.getUserByEmail(email);
+    // 입력된 이메일로 사용자 찾기
+    const user = await userModel.getUserByEmail(email);
 
-      // 사용자가 존재하지 않는 경우
-      if (!user) {
-        return res.send('<script>alert("아이디와 비밀번호를 다시 확인해주세요."); window.location.replace("/login");</script>');
-      }
-
-      // 비밀번호가 일치하지 않는 경우
-      const isValidPassword = await bcryptjs.compare(password, user.password);
-      if (!isValidPassword) {
-        return res.send('<script>alert("아이디와 비밀번호를 다시 확인해주세요."); window.location.replace("/login");</script>');
-      }
-
-      // 로그인 성공 시, 세션에 사용자 정보 저장
-      req.session.user = {
-        id: user.id,
-        email: user.email,
-        name: user.name
-      };
-
-      // "아이디 저장하기" 체크박스 확인
-      if (req.body['remember-check']) {
-        res.cookie('savedEmail', email, { maxAge: 3600 * 24 * 30 * 1000 }); // 30일 동안 저장
-      } else {
-        res.clearCookie('savedEmail'); // 쿠키 삭제
-      }
-
-      // 로그인 성공
-      res.redirect("/");
-
-    } catch (error) {
-      console.error(error);
+    // 사용자가 존재하지 않는 경우
+    if (!user) {
+      return res.send('<script>alert("아이디와 비밀번호를 다시 확인해주세요."); window.location.replace("/login");</script>');
     }
+
+    // 비밀번호가 일치하지 않는 경우
+    const isValidPassword = await bcryptjs.compare(password, user.password);
+    if (!isValidPassword) {
+      return res.send('<script>alert("아이디와 비밀번호를 다시 확인해주세요."); window.location.replace("/login");</script>');
+    }
+
+    // 로그인 성공 시, 세션에 사용자 정보 저장
+    req.session.user = {
+      id: user.id,
+      email: user.email,
+      name: user.name
+    };
+
+    // "아이디 저장하기" 체크박스 확인
+    if (req.body['remember-check']) {
+      res.cookie('savedEmail', email, { maxAge: 3600 * 24 * 30 * 1000 }); // 30일 동안 저장
+    } else {
+      res.clearCookie('savedEmail'); // 쿠키 삭제
+    }
+
+    // 로그인 성공
+    res.redirect("/");
   },
 
   // 로그아웃 처리
   logout: async (req, res) => {
-    try {
-      req.session.destroy(err => {
-        if (err) {
-          return res.status(500).json({ error: 'Failed to log out' });
-        }
-        res.redirect('/');
-      });
-
-    } catch (error) {
-      console.error(error);
-    }
+    req.session.destroy(err => {
+      if (err) {
+        return res.status(500).json({ error: 'Failed to log out' });
+      }
+      res.redirect('/');
+    });
   },
 
   // 회원가입 페이지 로드
@@ -79,17 +67,12 @@ module.exports = {
 
   // 중복 이메일 찾기
   checkEmailDuplicate: async (req, res) => {
-    try {
-      const email = req.body.email;
-      const user = await userModel.getUserByEmail(email);
-      if (user) {
-        return res.status(200).json({ isDuplicate: true });
-      } else {
-        return res.status(200).json({ isDuplicate: false });
-      }
-    } catch (error) {
-      console.log("checkEmailDuplicate 실행 중 오류:", error);
-      return res.status(500).json({ message: 'Internal server error' });
+    const email = req.body.email;
+    const user = await userModel.getUserByEmail(email);
+    if (user) {
+      return res.status(200).json({ isDuplicate: true });
+    } else {
+      return res.status(200).json({ isDuplicate: false });
     }
   },
 
@@ -120,14 +103,10 @@ module.exports = {
 
   // 유저 가입 처리
   account: async (req, res) => {
-    try {
-      const { email, name, password } = req.body;
-      const hashedPassword = await bcryptjs.hash(password, 12);
+    const { email, name, password } = req.body;
+    const hashedPassword = await bcryptjs.hash(password, 12);
 
-      await userModel.creatdUser(email, name, hashedPassword);
-      res.redirect("/login");
-    } catch (error) {
-      console.error(error);
-    }
+    await userModel.createUser(email, name, hashedPassword);
+    res.redirect("/login");
   }
 };

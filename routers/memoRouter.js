@@ -4,16 +4,22 @@ const memoController = require('../controllers/memoController');
 const multer  = require('multer');
 const upload = multer();
 
+// errorwrapper 정의
+const wrapAsyncController = (fn) => {
+    return (req, res, next) => {
+        Promise.resolve(fn(req, res, next)).catch(next);
+    }
+  }
 
-router.get("/", memoController.memosLoadingUser);
-router.post("/memo",upload.array('files', 5),memoController.createMemo);
-router.put("/memo/:memoId",memoController.modifiedMemo);
-router.delete("/memo/:memoId",memoController.deleteMemo);
+router.get("/", wrapAsyncController(memoController.memosLoadingUser));
+router.post("/memo",upload.array('files', 5), wrapAsyncController(memoController.createMemo));
+router.put("/memo/:memoId", wrapAsyncController(memoController.modifiedMemo));
+router.delete("/memo/:memoId", wrapAsyncController(memoController.deleteMemo));
 
-router.get("/search",memoController.searchMemo);
+router.get("/search", wrapAsyncController(memoController.searchMemo));
 
-router.get("/bookmark",memoController.bookmarksLoadingUser);
-router.put("/bookmark/:memoId",memoController.bookmarkMemo);
-router.put("/un-bookmark/:memoId",memoController.unBookmarkMemo);
+router.get("/bookmark", wrapAsyncController(memoController.bookmarksLoadingUser));
+router.put("/bookmark/:memoId", wrapAsyncController(memoController.bookmarkMemo));
+router.put("/un-bookmark/:memoId", wrapAsyncController(memoController.unBookmarkMemo));
 
 module.exports = router;
