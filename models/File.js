@@ -13,7 +13,7 @@ exports.uploadFile = async (userId, memoId, files) => {
     try {
         // Firebase Storage에서 파일 업로드
 
-        const uploadTasks = files.map(async (file) => {
+        const uploadTasks = files.map(async (file, index) => {
             const fileName = Buffer.from(file.originalname, 'ascii').toString('utf8' );
             const type = file.mimetype;
             const uuid = uuidv4();
@@ -30,6 +30,7 @@ exports.uploadFile = async (userId, memoId, files) => {
                 fileName,
                 type,
                 uuid,
+                index: index + 1,
                 downloadURL,
             };
 
@@ -54,7 +55,7 @@ exports.uploadFile = async (userId, memoId, files) => {
 exports.getFilesByMemoId = async (memoId) => {
     try {
         const filesCollectionRef = collection(db, 'files');
-        const q = query(filesCollectionRef, where('memoId', '==', memoId));
+        const q = query(filesCollectionRef, where('memoId', '==', memoId), orderBy('index'));
         const querySnapshot = await getDocs(q);
 
         const files = [];
@@ -64,6 +65,7 @@ exports.getFilesByMemoId = async (memoId) => {
                 fileName: doc.data().fileName,
                 type: doc.data().type,
                 uuid: doc.data().uuid,
+                index: doc.data().index,
                 downloadURL: doc.data().downloadURL,
             });
         });
