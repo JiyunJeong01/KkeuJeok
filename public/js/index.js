@@ -84,20 +84,19 @@ function unBookmark(id) {
 function editPost(id) {
     showEdits(id);
 
-    // 이미지 편집 모드로 전환
-    /* 수정 기능 보류
     const imageContainer = document.getElementById(`${id}-imageContainer`);
     const imageCols = imageContainer.querySelectorAll('.input-col');
     imageCols.forEach(col => {
         const img = col.querySelector('img');
+        const index = col.getAttribute('data-index');
         const closeIcon = document.createElement('i');
         closeIcon.classList.add('xi-close');
         closeIcon.onclick = function() {
-            removeImage(img);
+            removeImage(img, col);
+            deleteImageFromDB(index, id);
         };
         col.appendChild(closeIcon);
     });
-    */
 
     let content = $(`#${id}-content`).text().trim();
     $(`#${id}-textarea`).val(content);
@@ -107,8 +106,8 @@ function showEdits(id) {
     $(`#${id}-editarea`).show();
     $(`#${id}-submit`).show();
     $(`#${id}-delete`).show();
-    $(`#${id}-image`).hide(); // 수정 기능 보류
-    $(`#${id}-file`).hide(); // 수정 기능 보류
+    $(`#${id}-image`).hide();
+    $(`#${id}-file`).hide();
 
     $(`#${id}-content`).hide();
     $(`#${id}-edit`).hide();
@@ -190,6 +189,16 @@ function handleImageUpload(files, imageContainerId, fileContainerId, inputElemen
 function removeImage(imageWrapper, inputElement) {
     imageWrapper.parentElement.removeChild(imageWrapper);
     inputElement.parentNode.removeChild(inputElement);
+}
+
+// 서버에 DELETE 요청을 보내서 DB에서 이미지 삭제
+function deleteImageFromDB(index,id) {
+    fetch(`/memo/${id}/${index}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
 }
 
 // 파일 input을 form에 추가합니다.

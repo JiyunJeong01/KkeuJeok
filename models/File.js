@@ -14,7 +14,7 @@ exports.uploadFile = async (userId, memoId, files) => {
         // Firebase Storage에서 파일 업로드
 
         const uploadTasks = files.map(async (file, index) => {
-            const fileName = Buffer.from(file.originalname, 'ascii').toString('utf8' );
+            const fileName = Buffer.from(file.originalname, 'ascii').toString('utf8');
             const type = file.mimetype;
             const uuid = uuidv4();
             // Firebase Storage에서 파일 업로드
@@ -104,6 +104,28 @@ exports.modifiedFiles = async (userId, memoId, takeFiles) => {
     const newFile = takeFiles.filter(file => !isFirebaseDownloadLink(file));
     await uploadFile(userId, memoId, newFile);
 
+}
+
+// 메모 수정 시 특정 파일 삭제
+exports.deleteOneFile = async (memoId, index, userId) => {
+    try {
+        const parsedIndex = parseInt(index, 10);
+        const fileSnapshot = await getDocs(
+            query(
+                collection(db, 'files'),
+                where('memoId', '==', memoId),
+                where('index', '==', parsedIndex)));
+
+        const file = fileSnapshot.docs[0].data();
+
+        const fileRef = ref(storage, `${userId}/${file.uuid}_${file.fileName}`);
+        await deleteObject(fileRef);
+        await deleteDoc(fileSnapshot.docs[0].ref);
+        return file;
+    } catch (error) {
+        console.error('이미지 삭제 중 오류:', error);
+        throw error;
+    }
 }
 
 // 메모 삭제와 관련된 파일 삭제

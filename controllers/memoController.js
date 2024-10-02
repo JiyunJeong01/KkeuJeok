@@ -48,6 +48,14 @@ module.exports = {
         res.status(200).json({ message: "메모가 성공적으로 삭제되었습니다." });
     },
 
+    deleteImage: async (req, res) => {
+        const userId = req.session.user ? req.session.user.id : 0;
+        let memoId = req.params.id;
+        let index = req.params.index;
+        await FileModel.deleteOneFile(memoId, index, userId);
+        res.send(200);
+    },
+
     searchMemo: async (req, res) => {
         if (req.session.user) {
             const userId = req.session.user.id;

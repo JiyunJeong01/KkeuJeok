@@ -55,7 +55,7 @@
                                 <div class="row row-cols-4" id="<%= memo.id %>-imageContainer">
                                     <% memo.files.forEach(file => { %>
                                         <% if (file.type.startsWith('image/')) { %>
-                                            <div class="col input-col file-view">
+                                            <div class="col input-col file-view" data-index="<%= file.index %>">
                                                 <img src="<%= file.downloadURL %>" alt="<%= file.fileName %>" onclick="imageShow(this.src)">
                                             </div>
                                         <% } %>
