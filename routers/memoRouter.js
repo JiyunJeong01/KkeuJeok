@@ -13,7 +13,7 @@ const wrapAsyncController = (fn) => {
 
 router.get("/", wrapAsyncController(memoController.memosLoadingUser));
 router.post("/memo",upload.array('files', 5), wrapAsyncController(memoController.createMemo));
-router.put("/memo/:memoId", wrapAsyncController(memoController.modifiedMemo));
+router.put("/memo/:memoId",upload.array('files', 5), wrapAsyncController(memoController.modifiedMemo));
 router.delete("/memo/:memoId", wrapAsyncController(memoController.deleteMemo));
 router.delete("/memo/:id/:index", wrapAsyncController(memoController.deleteImage));
 

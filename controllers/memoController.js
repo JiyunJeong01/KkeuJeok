@@ -33,9 +33,14 @@ module.exports = {
     },
 
     modifiedMemo: async (req, res) => {
+        const userId = req.session.user ? req.session.user.id : 0;
         let memoId = req.params.memoId;
-        let { content } = req.body;
+        const content = req.body.content;
         await MemoModel.modifiedMemo(memoId, content);
+
+        if (req.files && req.files.length > 0) { 
+            await FileModel.uploadFile(userId, memoId, req.files);
+        }
 
         res.status(200).json({ message: "메모가 성공적으로 수정되었습니다." });
     },

@@ -106,31 +106,39 @@ function showEdits(id) {
     $(`#${id}-editarea`).show();
     $(`#${id}-submit`).show();
     $(`#${id}-delete`).show();
-    $(`#${id}-image`).hide();
-    $(`#${id}-file`).hide();
+    $(`#${id}-image`).show();
+    $(`#${id}-file`).show();
 
     $(`#${id}-content`).hide();
     $(`#${id}-edit`).hide();
 }
 
 // 이미지 input을 form에 추가합니다.
-function imageInput() {
-    const form = document.getElementById('postForm');
-
+function imageInput(imageContainerId, fileContainerId, memoId = 'postForm') {
+    // memoId가 'postForm'이면 처음 작성하는 경우로 기본 폼을 사용
+    if (memoId === 'postForm') {
+        form = document.getElementById('postForm');
+    } 
+    // memoId가 있으면 해당 메모의 컨텐츠를 위한 폼으로 사용
+    else {
+        form = document.getElementById(`${memoId}-content`);
+    }
     const input = document.createElement('input');
     input.type = 'file';
-    input.id = "imageInput";
+    input.id = `${memoId}-imageInput`;
+    input.className = `${memoId}-imageInput`;
     input.accept = 'image/*';
     input.style.display = 'none';
     input.name = `files`;
 
     input.onchange = function (event) {
-        handleImageUpload(event.target.files, 'imageContainer', 'fileContainer', input);
+        handleImageUpload(event.target.files, imageContainerId, fileContainerId, input);
     };
 
-    form.appendChild(input); // input 요소를 컨테이너에 추가
-    input.click();
+    form.appendChild(input);  // input 요소를 form에 추가
+    input.click();  // 파일 선택 창을 띄움
 }
+
 
 // 이미지를 미리보기를 imageContainer 안에 추가합니다.
 function handleImageUpload(files, imageContainerId, fileContainerId, inputElement) {
@@ -162,17 +170,18 @@ function handleImageUpload(files, imageContainerId, fileContainerId, inputElemen
 
             // 이미지 wrapper 생성
             const imageWrapper = document.createElement('div');
-            imageWrapper.classList.add('col', 'input-col');
+            imageWrapper.classList.add('col', 'input-col', 'file-view');
 
             // 이미지 엘리먼트 생성
             const imageElement = document.createElement('img');
             imageElement.src = imageUrl;
+            imageElement.alt = file.name;
 
             // 이미지 제거 아이콘 생성
             const removeIcon = document.createElement('i');
             removeIcon.classList.add('xi-close');
             removeIcon.onclick = function () {
-                removeImage(imageWrapper, inputElement);
+                removeImage(imageWrapper, inputElement);  // 이미지 제거 함수 호출
             };
 
             imageWrapper.appendChild(imageElement);
@@ -266,22 +275,51 @@ function removeFile(fileWrapper, inputElement) {
 function submitEdit(memoId) {
     // 1. 작성 대상 메모의 content 를 확인합니다.
     let content = $(`#${memoId}-textarea`).val().trim();
+    
+    // 2. 수정할 파일 input을 가져옵니다.
+    let imageInputs = document.querySelectorAll(`.${memoId}-imageInput`);
+    let fileInput = document.getElementById(`${memoId}-fileInput`);
 
-    // 3. 전달할 data JSON으로 만듭니다.
-    let data = { 'content': content };
+    // 3. FormData 객체를 만듭니다.
+    let formData = new FormData();
 
-    // 4. PUT /memo/{memoId} 에 data를 전달합니다.
+    // 4. 텍스트 내용을 추가합니다.
+    formData.append('content', content);
+
+    // 5. 이미지 파일이 있다면 files로 추가합니다.
+    imageInputs.forEach(input => {
+        if (input.files.length > 0) {
+            for (let i = 0; i < input.files.length; i++) {
+                formData.append('files', input.files[i]);
+            }
+        }
+    });
+
+    // 6. 일반 파일이 있다면 files로 추가합니다.
+    if (fileInput && fileInput.files.length > 0) {
+        for (let i = 0; i < fileInput.files.length; i++) {
+            formData.append('files', fileInput.files[i]);
+        }
+    }
+
+    // 7. PUT /memo/{memoId} 에 formData를 전달합니다.
     fetch(`/memo/${memoId}`, {
         method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    }).then(data => {
-        alert('메시지가 성공적으로 작성되었습니다.');
-        window.location.reload();
-    })
+        body: formData
+    }).then(response => {
+        if (response.ok) {
+            alert('메시지가 성공적으로 수정되었습니다.');
+            window.location.reload();
+        } else {
+            alert('수정 중 문제가 발생했습니다.');
+        }
+    }).catch(error => {
+        console.error('Error:', error);
+        alert('수정 중 문제가 발생했습니다.');
+    });
 }
+
+
 
 // 메모를 삭제합니다.
 function deleteOne(memoId) {

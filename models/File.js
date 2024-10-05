@@ -1,4 +1,4 @@
-const { collection, doc, getDocs, addDoc, updateDoc, deleteDoc, query, orderBy, where } = require('firebase/firestore');
+const { collection, doc, getDocs, addDoc, updateDoc, deleteDoc, query, orderBy, where, limit } = require('firebase/firestore');
 const { ref, uploadBytes, getDownloadURL, deleteObject } = require('firebase/storage');
 const { db, storage } = require('../fbase');
 const { v4: uuidv4 } = require('uuid');
@@ -11,12 +11,29 @@ function isFirebaseDownloadLink(url) {
 // 파일 업로드 및 Firestore에 이미지 정보 저장
 exports.uploadFile = async (userId, memoId, files) => {
     try {
-        // Firebase Storage에서 파일 업로드
+        // Firestore에서 해당 memoId에 이미 존재하는 파일들의 index 확인
+        const filesQuery = query(
+            collection(db, 'files'),
+            where('memoId', '==', memoId),
+            orderBy('index', 'desc'),
+            limit(1)  // 가장 큰 index 값만 찾으면 되므로 1개만 가져옴
+        );
+        
+        const querySnapshot = await getDocs(filesQuery);
+        let lastIndex = 0; // 기존 파일이 없으면 0부터 시작
 
+        // 만약 파일이 존재하면 가장 높은 index 값을 lastIndex로 설정
+        if (!querySnapshot.empty) {
+            const lastFile = querySnapshot.docs[0].data();
+            lastIndex = lastFile.index; // 가장 큰 index 값
+        }
+
+        // Firebase Storage에서 파일 업로드
         const uploadTasks = files.map(async (file, index) => {
             const fileName = Buffer.from(file.originalname, 'ascii').toString('utf8');
             const type = file.mimetype;
             const uuid = uuidv4();
+            
             // Firebase Storage에서 파일 업로드
             const fileRef = ref(storage, `${userId}/${uuid}_${fileName}`);
             await uploadBytes(fileRef, file.buffer);
@@ -30,7 +47,7 @@ exports.uploadFile = async (userId, memoId, files) => {
                 fileName,
                 type,
                 uuid,
-                index: index + 1,
+                index: lastIndex + index + 1,  // 기존 lastIndex에서 +1씩 증가
                 downloadURL,
             };
 
@@ -49,6 +66,7 @@ exports.uploadFile = async (userId, memoId, files) => {
         throw error;
     }
 }
+
 
 
 // 메모 별 파일 정보 로딩
