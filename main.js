@@ -61,7 +61,7 @@ app.use(errorController.respondNoResourceFound);
 app.use(errorController.respondInternalError);
 
 // 포트 및 뷰 엔진 설정
-app.set("port", process.env.PORT || 80);
+app.set("port", process.env.PORT || 3000);
 app.set("view engine", "ejs");
 
 // 최종적으로 제대로 작동하는지 확인 
