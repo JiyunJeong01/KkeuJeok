@@ -211,8 +211,15 @@ function deleteImageFromDB(index,id) {
 }
 
 // 파일 input을 form에 추가합니다.
-function fileInput() {
-    const form = document.getElementById('postForm');
+function fileInput(imageContainerId, fileContainerId, memoId = 'postForm') {
+    // memoId가 'postForm'이면 처음 작성하는 경우로 기본 폼을 사용
+    if (memoId === 'postForm') {
+        form = document.getElementById('postForm');
+    } 
+    // memoId가 있으면 해당 메모의 컨텐츠를 위한 폼으로 사용
+    else {
+        form = document.getElementById(`${memoId}-content`);
+    }
 
     const input = document.createElement('input');
     input.type = 'file';
@@ -221,7 +228,7 @@ function fileInput() {
     input.name = `files`;
 
     input.onchange = function (event) {
-        handleFileUpload(event.target.files, 'fileContainer', 'imageContainer', input);
+        handleFileUpload(event.target.files, fileContainerId, imageContainerId, input);
     };
 
     form.appendChild(input); // input 요소를 컨테이너에 추가

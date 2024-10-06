@@ -22,7 +22,7 @@
                 <div class="row row-cols-4 imageContainer" id="imageContainer"></div>
                 <div id="fileContainer"></div>
                 <i class="xi-image xi-x" onclick="imageInput('imageContainer', 'fileContainer');"></i>
-                <i class="xi-paperclip xi-x" onclick="fileInput()"></i>
+                <i class="xi-paperclip xi-x" onclick="fileInput('imageContainer', 'fileContainer')"></i>
                 <button type="submit">
                     <img class="send-img" src="/img/send.png" alt="">
                 </button>
@@ -79,7 +79,7 @@
                         <!-- 버튼 영역-->
                         <div class="footer">
                             <i id="<%= memo.id %>-image" class="xi-image xi-x" onclick="imageInput('<%= memo.id %>-imageContainer', '<%= memo.id %>-fileContainer', '<%= memo.id %>');"></i>
-                            <i id="<%= memo.id %>-file" class="xi-paperclip xi-x" onclick="fileInput()"></i>
+                            <i id="<%= memo.id %>-file" class="xi-paperclip xi-x" onclick="fileInput('<%= memo.id %>-imageContainer', '<%= memo.id %>-fileContainer', '<%= memo.id %>')"></i>
                             <i id="<%= memo.id %>-bookmark" class="xi-star-o xi-x" onclick="bookmark('<%= memo.id %>')" 
                                 style="display: <%= memo.bookmark ? 'none' : 'block' %>;"></i>
                             <i id = "<%=memo.id %>-unbookmark" class="xi-star xi-x" onclick="unBookmark(('<%=memo.id %>'))"
