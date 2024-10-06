@@ -223,7 +223,7 @@ function fileInput(imageContainerId, fileContainerId, memoId = 'postForm') {
 
     const input = document.createElement('input');
     input.type = 'file';
-    input.id = "fileInput";
+    input.id = `${memoId}-fileInput`;
     input.style.display = 'none';
     input.name = `files`;
 
