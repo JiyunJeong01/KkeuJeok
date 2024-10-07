@@ -98,6 +98,21 @@ function editPost(id) {
         col.appendChild(closeIcon);
     });
 
+    const fileContainer = document.getElementById(`${id}-fileContainer`);
+    const fileCol = fileContainer.getElementsByClassName('input-col')[0];
+    const file = fileContainer.querySelector('a');
+    const index = 1;
+    const closeIcon = document.createElement('i');
+    closeIcon.classList.add('xi-close');
+    closeIcon.onclick = function() {
+        removeFile(file,fileContainer);
+        deleteImageFromDB(index, id);
+    };
+    file.onclick = function(event) {
+        event.preventDefault();
+    };
+    fileCol.appendChild(closeIcon);
+
     let content = $(`#${id}-content`).text().trim();
     $(`#${id}-textarea`).val(content);
 }
